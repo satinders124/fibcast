@@ -57,6 +57,17 @@ export default function AddCustomerScreen({ route, navigation }) {
     status:     existing?.status     || 'Active',
     billPaid:   existing?.billPaid   || 'Unpaid',
     notes:      existing?.notes      || '',
+    network: {
+      ponPort:   existing?.network?.ponPort   || '',
+      ontId:     existing?.network?.ontId     || '',
+      ontSerial: existing?.network?.ontSerial || '',
+      lanIp:     existing?.network?.lanIp     || '',
+      adminUser: existing?.network?.adminUser || '',
+      adminPass: existing?.network?.adminPass || '',
+      wifiSsid:  existing?.network?.wifiSsid  || '',
+      wifiPass:  existing?.network?.wifiPass  || '',
+      pppoeUser: existing?.network?.pppoeUser || '',
+    },
   });
 
   const [errors,  setErrors]  = useState({});
@@ -66,6 +77,10 @@ export default function AddCustomerScreen({ route, navigation }) {
   function set(k, v) {
     setForm(p => ({ ...p, [k]: v }));
     setErrors(p => ({ ...p, [k]: '' }));
+  }
+
+  function setNet(k, v) {
+    setForm(p => ({ ...p, network: { ...p.network, [k]: v } }));
   }
 
   function validate() {
@@ -121,6 +136,17 @@ export default function AddCustomerScreen({ route, navigation }) {
 
           <SelectPill label="Plan Speed" options={PLANS}    value={form.planSpeed} onChange={v => set('planSpeed', v)} />
           <SelectPill label="Bill Status" options={BILL_STATUS} value={form.billPaid} onChange={v => set('billPaid', v)} />
+
+          <Text style={s.groupLabel}>MODEM / NETWORK (OPTIONAL)</Text>
+          <FormInput label="PON Port"        value={form.network.ponPort}   onChangeText={t => setNet('ponPort', t)}   placeholder="e.g. 3"              keyboardType="number-pad" />
+          <FormInput label="ONT ID"          value={form.network.ontId}     onChangeText={t => setNet('ontId', t)}     placeholder="e.g. 12"             keyboardType="number-pad" />
+          <FormInput label="ONT Serial / MAC" value={form.network.ontSerial} onChangeText={t => setNet('ontSerial', t)} placeholder="e.g. SYTC12345678"  autoCapitalize="characters" />
+          <FormInput label="Modem LAN IP"    value={form.network.lanIp}     onChangeText={t => setNet('lanIp', t)}     placeholder="192.168.100.1"       keyboardType="numbers-and-punctuation" autoCapitalize="none" />
+          <FormInput label="Admin Username"  value={form.network.adminUser} onChangeText={t => setNet('adminUser', t)} placeholder="telecomadmin"        autoCapitalize="none" />
+          <FormInput label="Admin Password"  value={form.network.adminPass} onChangeText={t => setNet('adminPass', t)} placeholder="Modem admin password" autoCapitalize="none" />
+          <FormInput label="WiFi Name (SSID)" value={form.network.wifiSsid} onChangeText={t => setNet('wifiSsid', t)}  placeholder="Customer WiFi name"  autoCapitalize="none" />
+          <FormInput label="WiFi Password"   value={form.network.wifiPass}  onChangeText={t => setNet('wifiPass', t)}  placeholder="Customer WiFi key"   autoCapitalize="none" />
+          <FormInput label="PPPoE Username"  value={form.network.pppoeUser} onChangeText={t => setNet('pppoeUser', t)} placeholder="user@bsnl.in"        autoCapitalize="none" />
 
           <Text style={s.groupLabel}>NOTES</Text>
           <FormInput label="" value={form.notes} onChangeText={t => set('notes', t)} placeholder="Any important notes about this customer…" multiline />

@@ -112,6 +112,29 @@ export default function CustomerDetailScreen({ route, navigation }) {
 
   const call = () => fresh.mobile && Linking.openURL(`tel:${fresh.mobile}`);
 
+  const NETWORK_KEYS = ['ponPort', 'ontId', 'ontSerial', 'lanIp', 'adminUser', 'adminPass', 'wifiSsid', 'wifiPass', 'pppoeUser'];
+  const hasNetwork   = NETWORK_KEYS.some(k => fresh.network?.[k]);
+
+  // Open the ONT's local admin page — only reachable from the customer's own
+  // network, and we deliberately refuse anything outside private IP space.
+  function openModemAdmin() {
+    const ip         = (fresh.network?.lanIp || '').trim();
+    const parts      = ip.split('.');
+    const validQuad  = parts.length === 4 && parts.every(o => /^\d{1,3}$/.test(o) && Number(o) <= 255);
+    const isPrivate  =
+      /^10\./.test(ip) ||
+      /^192\.168\./.test(ip) ||
+      /^172\.(1[6-9]|2\d|3[01])\./.test(ip);
+
+    if (!(validQuad && isPrivate)) {
+      setToast({ visible: true, message: 'Modem LAN IP is missing or not a private address. Edit the customer to fix it.', type: 'error' });
+      return;
+    }
+    Linking.openURL(`http://${ip}`).catch(() => {
+      setToast({ visible: true, message: "Couldn't open the modem page — connect to the customer's WiFi first.", type: 'error' });
+    });
+  }
+
   function remindOnWhatsApp() {
     if (!fresh.mobile) return;
     const msg = encodeURIComponent(renderTemplate(settings.reminderTemplate, { name: fresh.fullName }));
@@ -187,6 +210,44 @@ export default function CustomerDetailScreen({ route, navigation }) {
               ) : null}
             </View>
           ))}
+        </View>
+
+        {/* Modem & network */}
+        <View style={s.section}>
+          <Text style={s.sectionTitle}>MODEM & NETWORK</Text>
+          {hasNetwork ? (
+            <Card>
+              <View style={s.netStatusRow}>
+                <View style={s.netStatusDot} />
+                <Text style={s.netStatusText}>OLT link not connected yet — live status arrives with the network connector.</Text>
+              </View>
+              {fresh.network?.lanIp ? (
+                <TouchableOpacity style={s.netOpenBtn} onPress={openModemAdmin} activeOpacity={0.8}>
+                  <Text style={s.netOpenBtnText}>Open Modem Admin ({fresh.network.lanIp})</Text>
+                </TouchableOpacity>
+              ) : null}
+              <DetailRow label="PON Port"            value={fresh.network?.ponPort} />
+              <DetailRow label="ONT ID"              value={fresh.network?.ontId} />
+              <CopyRow   label="ONT Serial / MAC"    value={fresh.network?.ontSerial} />
+              <CopyRow   label="Admin Username"      value={fresh.network?.adminUser} />
+              <CopyRow   label="Admin Password"      value={fresh.network?.adminPass} />
+              <CopyRow   label="WiFi Name (SSID)"    value={fresh.network?.wifiSsid} />
+              <CopyRow   label="WiFi Password"       value={fresh.network?.wifiPass} />
+              <CopyRow   label="PPPoE Username"      value={fresh.network?.pppoeUser} />
+            </Card>
+          ) : (
+            <Card>
+              <TouchableOpacity
+                style={s.netEmpty}
+                onPress={() => navigation.navigate('AddCustomer', { customer: fresh })}
+                activeOpacity={0.75}
+              >
+                <Text style={s.netEmptyTitle}>No modem details yet</Text>
+                <Text style={s.netEmptySub}>Record PON port, ONT serial, WiFi and admin credentials here — field staff will thank you on every visit.</Text>
+                <Text style={s.netEmptyCta}>Add modem details  ›</Text>
+              </TouchableOpacity>
+            </Card>
+          )}
         </View>
 
         {/* Contact */}
@@ -270,6 +331,16 @@ const s = StyleSheet.create({
   idCardValue:      { fontSize: 22, fontWeight: '900', color: Colors.white, marginBottom: 10, letterSpacing: -0.4 },
   idCopy:           { backgroundColor: 'rgba(6,182,212,0.1)', borderWidth: 1, borderColor: 'rgba(6,182,212,0.2)', borderRadius: 8, paddingHorizontal: 12, paddingVertical: 5 },
   idCopyText:       { color: Colors.cyanSoft, fontSize: 11, fontWeight: '800' },
+
+  netStatusRow:     { flexDirection: 'row', alignItems: 'flex-start', gap: 8, paddingHorizontal: 16, paddingTop: 14, paddingBottom: 4 },
+  netStatusDot:     { width: 7, height: 7, borderRadius: 4, backgroundColor: Colors.yellow, marginTop: 4, flexShrink: 0 },
+  netStatusText:    { color: Colors.muted, fontSize: 11.5, lineHeight: 16, flex: 1 },
+  netOpenBtn:       { marginHorizontal: 14, marginTop: 10, marginBottom: 4, backgroundColor: 'rgba(6,182,212,0.10)', borderWidth: 1, borderColor: 'rgba(6,182,212,0.28)', borderRadius: 12, paddingVertical: 12, alignItems: 'center' },
+  netOpenBtnText:   { color: Colors.cyanSoft, fontSize: 13, fontWeight: '800' },
+  netEmpty:         { padding: 18 },
+  netEmptyTitle:    { color: Colors.white, fontSize: 14.5, fontWeight: '800', marginBottom: 5 },
+  netEmptySub:      { color: Colors.muted, fontSize: 12.5, lineHeight: 18 },
+  netEmptyCta:      { color: Colors.cyanSoft, fontSize: 13, fontWeight: '800', marginTop: 12 },
 
   detailRow:        { paddingVertical: 13, paddingHorizontal: 16, borderBottomWidth: 1, borderBottomColor: Colors.border },
   detailLabel:      { fontSize: 10, color: Colors.muted, fontWeight: '800', textTransform: 'uppercase', letterSpacing: 0.8, marginBottom: 4 },
