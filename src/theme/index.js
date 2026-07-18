@@ -1,8 +1,8 @@
 export const Colors = {
   bg:       '#080F1E',
   bgMid:    '#0C1628',
-  card:     '#0F1E38',
-  cardHov:  '#122244',
+  card:     '#101F38',
+  cardHov:  '#162B4A',
   blue:     '#2563EB',
   indigo:   '#4F46E5',
   cyan:     '#06B6D4',

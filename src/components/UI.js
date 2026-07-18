@@ -176,8 +176,8 @@ const s = StyleSheet.create({
   badgeText:       { fontSize: 11, fontWeight: '700', letterSpacing: 0.2 },
 
   // Buttons
-  primaryBtn:      { backgroundColor: Colors.blue, borderRadius: 6, paddingVertical: 14, paddingHorizontal: 28, alignItems: 'center', justifyContent: 'center' },
-  primaryBtnSm:    { paddingVertical: 9, paddingHorizontal: 18 },
+  primaryBtn:      { backgroundColor: Colors.blue, borderRadius: 12, paddingVertical: 15, paddingHorizontal: 28, alignItems: 'center', justifyContent: 'center', shadowColor: Colors.blue, shadowOpacity: 0.25, shadowRadius: 10, elevation: 4 },
+  primaryBtnSm:    { paddingVertical: 10, paddingHorizontal: 18 },
   primaryBtnText:  { color: '#fff', fontWeight: '700', fontSize: 15, letterSpacing: 0.2 },
   ghostBtn:        { borderRadius: 6, paddingVertical: 13, paddingHorizontal: 22, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: Colors.border },
   ghostBtnDanger:  { borderColor: 'rgba(255,59,48,0.3)', backgroundColor: 'rgba(255,59,48,0.06)' },
@@ -186,11 +186,11 @@ const s = StyleSheet.create({
   // Form
   fieldWrap:       { marginBottom: 16 },
   fieldLabel:      { fontSize: 11, fontWeight: '700', color: Colors.muted, marginBottom: 7, textTransform: 'uppercase', letterSpacing: 0.8 },
-  input:           { backgroundColor: Colors.card, borderWidth: 1, borderColor: Colors.border, borderRadius: 6, paddingHorizontal: 14, paddingVertical: 13, fontSize: 15, color: Colors.white },
+  input:           { backgroundColor: Colors.card, borderWidth: 1, borderColor: Colors.border, borderRadius: 12, paddingHorizontal: 15, paddingVertical: 14, fontSize: 15, color: Colors.white, minHeight: 52 },
   fieldError:      { color: Colors.red, fontSize: 11, marginTop: 5 },
 
   // Card — sharp corners, thin border
-  card:            { backgroundColor: Colors.card, borderRadius: 8, borderWidth: 1, borderColor: Colors.border, overflow: 'hidden' },
+  card:            { backgroundColor: Colors.card, borderRadius: 16, borderWidth: 1, borderColor: Colors.border, overflow: 'hidden', shadowColor: '#000', shadowOpacity: 0.18, shadowRadius: 12, elevation: 3 },
   cardAccent:      { height: 2, width: '100%' },
 
   sectionLabel:    { fontSize: 11, fontWeight: '700', color: Colors.muted, textTransform: 'uppercase', letterSpacing: 0.8, marginBottom: 10 },
