@@ -1,344 +1,40 @@
-import React, { useState } from 'react';
-import {
-  View, Text, StyleSheet, ScrollView,
-  TouchableOpacity, ActivityIndicator, RefreshControl,
-  Linking, Alert,
-} from 'react-native';
+import React, { useMemo, useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, RefreshControl, ActivityIndicator, Linking, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Colors } from '../theme';
-import { Avatar, Badge, Card, PrimaryButton, EmptyState } from '../components/UI';
+import { Avatar, Badge, Card, EmptyState } from '../components/UI';
 import { useCustomers } from '../context/CustomerContext';
 import { useAuth } from '../context/AuthContext';
 import { useBusiness } from '../context/BusinessContext';
 
-function StatCard({ icon, label, value, accent }) {
-  return (
-    <View style={[s.statCard, { borderTopColor: accent || Colors.blue }]}>
-      <Text style={s.statIcon}>{icon}</Text>
-      <Text style={s.statValue}>{value}</Text>
-      <Text style={s.statLabel}>{label}</Text>
-    </View>
-  );
+function Metric({ label, value, detail, tone }) {
+  return <View style={styles.metric}><View style={[styles.metricRule, { backgroundColor: tone }]} /><Text style={styles.metricLabel}>{label}</Text><Text style={styles.metricValue}>{value}</Text><Text style={styles.metricDetail}>{detail}</Text></View>;
+}
+function Action({ label, hint, symbol, onPress, primary }) {
+  return <TouchableOpacity style={[styles.action, primary && styles.actionPrimary]} onPress={onPress} activeOpacity={0.8}><View style={[styles.actionSymbol, primary && styles.actionSymbolPrimary]}><Text style={[styles.actionSymbolText, primary && { color: Colors.blue }]}>{symbol}</Text></View><View style={{ flex: 1 }}><Text style={styles.actionLabel}>{label}</Text><Text style={styles.actionHint}>{hint}</Text></View><Text style={styles.chevron}>›</Text></TouchableOpacity>;
 }
 
 export default function DashboardScreen({ navigation }) {
   const { customers, loading } = useCustomers();
-  const { user, logout } = useAuth();
+  const { logout } = useAuth();
   const { profile } = useBusiness();
   const [refreshing, setRefreshing] = useState(false);
-
-  const total    = customers.length;
-const active   = customers.filter(c => c.status === 'Active').length;
-const paid     = customers.filter(c => c.billPaid === 'Paid').length;
-const unpaid   = customers.filter(c => c.billPaid === 'Unpaid' || !c.billPaid).length;
-
-  const thisMonth = new Date().toISOString().slice(0, 7);
-  const addedThisMonth = customers.filter(c => c.joinDate?.startsWith(thisMonth)).length;
-  const activeRate = total > 0 ? Math.round((active / total) * 100) : 0;
-
-  const recent = [...customers]
-    .sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0))
-    .slice(0, 6);
-
+  const total = customers.length;
+  const active = customers.filter(c => c.status === 'Active').length;
+  const unpaid = customers.filter(c => c.billPaid === 'Unpaid' || !c.billPaid).length;
+  const activeRate = total ? Math.round((active / total) * 100) : 0;
+  const recent = useMemo(() => [...customers].sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0)).slice(0, 5), [customers]);
+  const firstName = profile?.ownerName?.split(' ')[0] || 'there';
   const month = new Date().toLocaleString('default', { month: 'long', year: 'numeric' });
+  const refresh = () => { setRefreshing(true); setTimeout(() => setRefreshing(false), 900); };
+  const call = mobile => Linking.openURL(`tel:${mobile}`);
 
-  async function onRefresh() {
-    setRefreshing(true);
-    setTimeout(() => setRefreshing(false), 1200);
-  }
-
-  function callCustomer(mobile) {
-    Linking.openURL(`tel:${mobile}`);
-  }
-
-  function whatsappCustomer(mobile, name) {
-    const msg = encodeURIComponent(`Hello ${name}, regarding your BSNL broadband connection.`);
-    Linking.openURL(`whatsapp://send?phone=91${mobile}&text=${msg}`);
-  }
-
-  if (loading) {
-    return (
-      <SafeAreaView style={s.safe}>
-        <View style={s.loader}>
-          <ActivityIndicator color={Colors.cyan} size="large" />
-          <Text style={s.loaderText}>Loading Fibcast…</Text>
-        </View>
-      </SafeAreaView>
-    );
-  }
-
-  return (
-    <SafeAreaView style={s.safe} edges={['top']}>
-      <ScrollView
-        style={s.scroll}
-        showsVerticalScrollIndicator={false}
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-            tintColor={Colors.cyan}
-            colors={[Colors.cyan]}
-          />
-        }
-      >
-        {/* Header */}
-        <View style={s.header}>
-          <View>
-            <Text style={s.greeting}>
-              {profile.businessName || 'Dashboard'} 👋
-            </Text>
-            <Text style={s.greetingSub}>{month}</Text>
-          </View>
-          <View style={{ flexDirection: 'row', gap: 8, alignItems: 'center' }}>
-  <TouchableOpacity
-    onPress={() => navigation.navigate('Business')}
-    activeOpacity={0.7}
-  >
-    <View style={s.profileAvatar}>
-      <Text style={{ fontSize: 15 }}>
-        {profile.ownerName ? profile.ownerName[0].toUpperCase() : '👤'}
-      </Text>
-    </View>
-  </TouchableOpacity>
-  <TouchableOpacity
-    onPress={() => {
-      Alert.alert(
-        'Sign Out',
-        'Are you sure you want to sign out?',
-        [
-          { text: 'Cancel', style: 'cancel' },
-          { text: 'Sign Out', style: 'destructive', onPress: logout },
-        ]
-      );
-    }}
-    activeOpacity={0.7}
-    style={s.logoutBtn}
-  >
-    <Text style={s.logoutText}>Out</Text>
-  </TouchableOpacity>
-</View>
-        </View>
-
-        {/* Stats */}
-        <View style={s.statsRow}>
-  <StatCard icon="👥" label="Total"   value={total}   accent={Colors.blue}  />
-  <StatCard icon="✅" label="Active"  value={active}  accent={Colors.green} />
-  <StatCard icon="💰" label="Paid"    value={paid}    accent={Colors.cyan}  />
-  <StatCard icon="🔴" label="Unpaid"  value={unpaid}  accent={Colors.red}   />
-</View>
-
-        {/* Active rate bar */}
-        <View style={s.rateCard}>
-          <View style={s.rateCardTop} />
-          <View style={s.rateRow}>
-            <View>
-              <Text style={s.rateTitle}>Active Rate</Text>
-              <Text style={s.rateSub}>{active} active of {total} total</Text>
-            </View>
-            <Text style={s.rateValue}>{activeRate}%</Text>
-          </View>
-          <View style={s.rateBarWrap}>
-            <View style={[s.rateBar, { width: `${activeRate}%` }]} />
-          </View>
-        </View>
-
-        {/* This month */}
-        <View style={s.monthRow}>
-          <View style={s.monthCard}>
-            <Text style={s.monthIcon}>🆕</Text>
-            <Text style={s.monthValue}>{addedThisMonth}</Text>
-            <Text style={s.monthLabel}>Added this month</Text>
-          </View>
-          <View style={s.monthCard}>
-            <Text style={s.monthIcon}>📶</Text>
-            <Text style={s.monthValue}>{active}</Text>
-            <Text style={s.monthLabel}>Live connections</Text>
-          </View>
-        </View>
-
-        {/* Quick actions */}
-        <Text style={s.sectionHead}>Quick Actions</Text>
-        <View style={s.quickActions}>
-          <TouchableOpacity
-            style={s.quickBtn}
-            onPress={() => navigation.navigate('AddCustomer')}
-            activeOpacity={0.7}
-          >
-            <Text style={s.quickBtnIcon}>➕</Text>
-            <Text style={s.quickBtnText}>Add Customer</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={s.quickBtn}
-            onPress={() => navigation.navigate('Search')}
-            activeOpacity={0.7}
-          >
-            <Text style={s.quickBtnIcon}>🔍</Text>
-            <Text style={s.quickBtnText}>Quick Search</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={s.quickBtn}
-            onPress={() => navigation.navigate('Bills')}
-            activeOpacity={0.7}
-          >
-            <Text style={s.quickBtnIcon}>💰</Text>
-            <Text style={s.quickBtnText}>Bill Status</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={s.quickBtn}
-            onPress={() => navigation.navigate('Business', { screen: 'Reports' })}
-            activeOpacity={0.7}
-          >
-            <Text style={s.quickBtnIcon}>📊</Text>
-            <Text style={s.quickBtnText}>Reports</Text>
-          </TouchableOpacity>
-        </View>
-
-        {/* Pending customers alert */}
-        {unpaid > 0 && (
-  <View style={s.alertCard}>
-    <View style={s.alertTop} />
-    <Text style={s.alertTitle}>🔴 {unpaid} Unpaid Bill{unpaid > 1 ? 's' : ''} This Month</Text>
-    <Text style={s.alertSub}>These customers have not paid their BSNL bill yet.</Text>
-    <TouchableOpacity
-      onPress={() => navigation.navigate('Bills')}
-      activeOpacity={0.7}
-    >
-      <Text style={s.alertLink}>View unpaid customers →</Text>
-    </TouchableOpacity>
-  </View>
-)}
-
-        {/* Recent customers */}
-        <Text style={s.sectionHead}>Recent Customers</Text>
-        <Card>
-          {recent.length === 0 ? (
-            <EmptyState
-              icon="📡"
-              title="No customers yet"
-              subtitle="Add your first BSNL customer to get started."
-              onAction={() => navigation.navigate('AddCustomer')}
-              actionLabel="+ Add Customer"
-            />
-          ) : (
-            recent.map((c, i) => (
-              <View
-                key={c.id}
-                style={[s.customerRow, i < recent.length - 1 && s.customerRowBorder]}
-              >
-                <TouchableOpacity
-                  style={s.customerMain}
-                  onPress={() => navigation.navigate('CustomerDetail', { customer: c })}
-                  activeOpacity={0.7}
-                >
-                  <Avatar name={c.fullName} size={42} />
-                  <View style={s.customerInfo}>
-                    <Text style={s.customerName} numberOfLines={1}>{c.fullName}</Text>
-                    <Text style={s.customerMeta}>{c.userID} · {c.planSpeed}</Text>
-                    <Text style={s.customerPhone}>{c.mobile}</Text>
-                  </View>
-                  <View style={s.customerRight}>
-                    <Badge status={c.status} />
-                  </View>
-                </TouchableOpacity>
-
-                {/* Call + WhatsApp buttons */}
-                <View style={s.contactBtns}>
-                  <TouchableOpacity
-                    style={s.contactBtn}
-                    onPress={() => callCustomer(c.mobile)}
-                    activeOpacity={0.7}
-                  >
-                    <Text style={{ fontSize: 14 }}>📞</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    style={[s.contactBtn, s.contactBtnWA]}
-                    onPress={() => whatsappCustomer(c.mobile, c.fullName)}
-                    activeOpacity={0.7}
-                  >
-                    <Text style={{ fontSize: 14 }}>💬</Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            ))
-          )}
-        </Card>
-
-        {customers.length > 6 && (
-          <TouchableOpacity
-            style={s.viewAllBtn}
-            onPress={() => navigation.navigate('Customers')}
-            activeOpacity={0.7}
-          >
-            <Text style={s.viewAllText}>View All {customers.length} Customers →</Text>
-          </TouchableOpacity>
-        )}
-
-        <View style={{ height: 30 }} />
-      </ScrollView>
-    </SafeAreaView>
-  );
+  if (loading) return <SafeAreaView style={styles.safe}><View style={styles.loader}><ActivityIndicator color={Colors.cyan} size="large" /><Text style={styles.muted}>Preparing your workspace…</Text></View></SafeAreaView>;
+  return <SafeAreaView style={styles.safe} edges={['top']}><ScrollView style={styles.scroll} showsVerticalScrollIndicator={false} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={refresh} tintColor={Colors.cyan} />}>
+    <View style={styles.header}><View><Text style={styles.eyebrow}>OPERATIONS OVERVIEW</Text><Text style={styles.title}>Good morning, {firstName}</Text><Text style={styles.subtitle}>{month} · Here’s your business pulse</Text></View><TouchableOpacity style={styles.avatarButton} onPress={() => navigation.navigate('Business')}><Text style={styles.avatarLetter}>{profile?.ownerName?.[0]?.toUpperCase() || 'U'}</Text></TouchableOpacity></View>
+    <View style={styles.hero}><View style={styles.heroCopy}><Text style={styles.heroEyebrow}>TODAY’S COMMAND CENTER</Text><Text style={styles.heroTitle}>{unpaid ? `${unpaid} payment${unpaid === 1 ? '' : 's'} need attention` : 'Your collections are clear'}</Text><Text style={styles.heroText}>{unpaid ? 'Follow up with customers before your next billing cycle.' : 'Keep the momentum going. Your customer base is in good shape.'}</Text><TouchableOpacity style={styles.heroButton} onPress={() => navigation.navigate(unpaid ? 'Bills' : 'AddCustomer')}><Text style={styles.heroButtonText}>{unpaid ? 'Review collections' : 'Add a customer'}  ›</Text></TouchableOpacity></View><View style={styles.heroOrb}><Text style={styles.heroOrbText}>{unpaid || '✓'}</Text><Text style={styles.heroOrbLabel}>{unpaid ? 'DUE' : 'ON TRACK'}</Text></View></View>
+    <View style={styles.metrics}><Metric label="CUSTOMERS" value={total} detail="All accounts" tone={Colors.blue} /><Metric label="ACTIVE" value={`${activeRate}%`} detail={`${active} live connections`} tone={Colors.green} /><Metric label="UNPAID" value={unpaid} detail="Needs follow-up" tone={unpaid ? Colors.yellow : Colors.cyan} /></View>
+    <Text style={styles.sectionTitle}>Quick actions</Text><View style={styles.actions}><Action label="Add customer" hint="Create a new account" symbol="+" primary onPress={() => navigation.navigate('AddCustomer')} /><Action label="Find a customer" hint="Search your network" symbol="⌕" onPress={() => navigation.navigate('Search')} /><Action label="View billing" hint={unpaid ? `${unpaid} accounts need attention` : 'No outstanding alerts'} symbol="₹" onPress={() => navigation.navigate('Bills')} /><Action label="Business insights" hint="Review performance" symbol="↗" onPress={() => navigation.navigate('Business', { screen: 'Reports' })} /></View>
+    <View style={styles.sectionHeader}><Text style={styles.sectionTitle}>Recent customers</Text>{total > 5 && <TouchableOpacity onPress={() => navigation.navigate('Customers')}><Text style={styles.link}>View all  ›</Text></TouchableOpacity>}</View><Card>{recent.length === 0 ? <EmptyState icon="◎" title="Your customer workspace is ready" subtitle="Add your first customer to start tracking connections and collections." onAction={() => navigation.navigate('AddCustomer')} actionLabel="Add first customer" /> : recent.map((c, i) => <TouchableOpacity key={c.id} style={[styles.customer, i < recent.length - 1 && styles.customerBorder]} onPress={() => navigation.navigate('CustomerDetail', { customer: c })} activeOpacity={0.75}><Avatar name={c.fullName} size={40} /><View style={styles.customerInfo}><Text style={styles.customerName} numberOfLines={1}>{c.fullName}</Text><Text style={styles.customerMeta}>{c.userID || 'No ID'} · {c.planSpeed || 'Plan not set'}</Text></View><View style={styles.customerRight}><Badge status={c.status} /><TouchableOpacity onPress={() => call(c.mobile)}><Text style={styles.call}>Call</Text></TouchableOpacity></View></TouchableOpacity>)}</Card><TouchableOpacity style={styles.signOut} onPress={() => Alert.alert('Sign out', 'Are you sure you want to sign out?', [{ text: 'Cancel', style: 'cancel' }, { text: 'Sign out', style: 'destructive', onPress: logout }])}><Text style={styles.signOutText}>Sign out</Text></TouchableOpacity><View style={{ height: 28 }} /></ScrollView></SafeAreaView>;
 }
-
-const s = StyleSheet.create({
-  safe:               { flex: 1, backgroundColor: Colors.bg },
-  scroll:             { flex: 1, paddingHorizontal: 18 },
-  loader:             { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 12 },
-  loaderText:         { color: Colors.muted, fontSize: 14 },
-
-header:             { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingTop: 16, marginBottom: 20, paddingRight: 4 },  greeting:           { fontSize: 20, fontWeight: '900', color: Colors.white, letterSpacing: -0.5 },
-  greetingSub:        { fontSize: 12, color: Colors.muted, marginTop: 2 },
-  profileBtn:         { padding: 2 },
-  profileAvatar:      { width: 40, height: 40, borderRadius: 20, backgroundColor: Colors.blue, alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: Colors.cyan },
-
-  statsRow:           { flexDirection: 'row', gap: 10, marginBottom: 14 },
-  statCard:           { flex: 1, backgroundColor: Colors.card, borderRadius: 14, borderWidth: 1, borderColor: Colors.border, borderTopWidth: 2, padding: 12, alignItems: 'center' },
-  statIcon:           { fontSize: 18, marginBottom: 6 },
-  statValue:          { fontSize: 20, fontWeight: '900', color: Colors.white, lineHeight: 22 },
-  statLabel:          { fontSize: 9, color: Colors.muted, marginTop: 3, fontWeight: '600' },
-
-  rateCard:           { backgroundColor: Colors.card, borderRadius: 14, borderWidth: 1, borderColor: Colors.border, padding: 16, marginBottom: 14, overflow: 'hidden' },
-  rateCardTop:        { position: 'absolute', top: 0, left: 0, right: 0, height: 2, backgroundColor: Colors.cyan },
-  rateRow:            { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 },
-  rateTitle:          { fontSize: 14, fontWeight: '700', color: Colors.white },
-  rateSub:            { fontSize: 11, color: Colors.muted, marginTop: 2 },
-  rateValue:          { fontSize: 28, fontWeight: '900', color: Colors.cyan },
-  rateBarWrap:        { height: 6, backgroundColor: 'rgba(255,255,255,0.06)', borderRadius: 3, overflow: 'hidden' },
-  rateBar:            { height: '100%', backgroundColor: Colors.cyan, borderRadius: 3 },
-
-  monthRow:           { flexDirection: 'row', gap: 12, marginBottom: 20 },
-  monthCard:          { flex: 1, backgroundColor: Colors.card, borderRadius: 14, borderWidth: 1, borderColor: Colors.border, padding: 14, alignItems: 'center' },
-  monthIcon:          { fontSize: 22, marginBottom: 6 },
-  monthValue:         { fontSize: 24, fontWeight: '900', color: Colors.white },
-  monthLabel:         { fontSize: 10, color: Colors.muted, marginTop: 4, textAlign: 'center', fontWeight: '600' },
-
-  sectionHead:        { fontSize: 13, fontWeight: '700', color: Colors.white, marginBottom: 10 },
-
-  quickActions:       { flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginBottom: 20 },
-  quickBtn:           { width: '47%', backgroundColor: Colors.card, borderRadius: 14, borderWidth: 1, borderColor: Colors.border, padding: 16, alignItems: 'center', gap: 8 },
-  quickBtnIcon:       { fontSize: 24 },
-  quickBtnText:       { fontSize: 12, fontWeight: '700', color: Colors.white },
-
-  alertCard:          { backgroundColor: 'rgba(245,158,11,0.08)', borderRadius: 14, borderWidth: 1, borderColor: 'rgba(245,158,11,0.2)', padding: 16, marginBottom: 20, overflow: 'hidden' },
-  alertTop:           { position: 'absolute', top: 0, left: 0, right: 0, height: 2, backgroundColor: Colors.yellow },
-  alertTitle:         { fontSize: 14, fontWeight: '700', color: Colors.white, marginBottom: 4 },
-  alertSub:           { fontSize: 12, color: Colors.muted, lineHeight: 18, marginBottom: 10 },
-  alertLink:          { fontSize: 13, color: Colors.yellow, fontWeight: '700' },
-
-  customerRow:        { paddingVertical: 12, paddingHorizontal: 14, gap: 8 },
-  customerRowBorder:  { borderBottomWidth: 1, borderBottomColor: Colors.border },
-  customerMain:       { flexDirection: 'row', alignItems: 'center', gap: 12 },
-  customerInfo:       { flex: 1, minWidth: 0 },
-  customerName:       { fontSize: 14, fontWeight: '600', color: Colors.white },
-  customerMeta:       { fontSize: 11, color: Colors.cyan, marginTop: 1 },
-  customerPhone:      { fontSize: 11, color: Colors.muted, marginTop: 1 },
-  customerRight:      { alignItems: 'flex-end' },
-
-  contactBtns:        { flexDirection: 'row', gap: 8, paddingLeft: 54 },
-  contactBtn:         { backgroundColor: 'rgba(37,99,235,0.1)', borderWidth: 1, borderColor: 'rgba(37,99,235,0.2)', borderRadius: 8, paddingHorizontal: 14, paddingVertical: 6 },
-  contactBtnWA:       { backgroundColor: 'rgba(37,211,102,0.08)', borderColor: 'rgba(37,211,102,0.2)' },
-
-  viewAllBtn:         { marginTop: 14, padding: 14, borderRadius: 50, borderWidth: 1, borderColor: Colors.border, alignItems: 'center' },
-  viewAllText:        { color: Colors.cyan, fontWeight: '700', fontSize: 14 },
-  logoutBtn:  { backgroundColor: 'rgba(239,68,68,0.08)', borderWidth: 1, borderColor: 'rgba(239,68,68,0.2)', borderRadius: 20, paddingHorizontal: 10, paddingVertical: 6 },
-logoutText: { color: Colors.red, fontSize: 11, fontWeight: '700' },
-});
+const styles = StyleSheet.create({ safe: { flex: 1, backgroundColor: Colors.bg }, scroll: { flex: 1, paddingHorizontal: 18 }, loader: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 12 }, muted: { color: Colors.muted, fontSize: 14 }, header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingTop: 18, marginBottom: 22 }, eyebrow: { color: Colors.cyan, fontSize: 10, fontWeight: '800', letterSpacing: 1.4, marginBottom: 7 }, title: { color: Colors.white, fontSize: 25, fontWeight: '800', letterSpacing: -0.7 }, subtitle: { color: Colors.muted, fontSize: 12, marginTop: 5 }, avatarButton: { width: 42, height: 42, borderRadius: 14, backgroundColor: Colors.blue, alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: 'rgba(6,182,212,.5)' }, avatarLetter: { color: '#fff', fontWeight: '800', fontSize: 16 }, hero: { backgroundColor: Colors.blue, borderRadius: 20, padding: 20, minHeight: 190, flexDirection: 'row', overflow: 'hidden', marginBottom: 14 }, heroCopy: { flex: 1, zIndex: 1 }, heroEyebrow: { color: 'rgba(255,255,255,.68)', fontSize: 10, letterSpacing: 1.2, fontWeight: '800' }, heroTitle: { color: '#fff', fontSize: 21, lineHeight: 26, fontWeight: '800', marginTop: 10, maxWidth: 225 }, heroText: { color: 'rgba(255,255,255,.75)', fontSize: 12, lineHeight: 18, marginTop: 7, maxWidth: 235 }, heroButton: { alignSelf: 'flex-start', backgroundColor: '#fff', borderRadius: 9, paddingHorizontal: 13, paddingVertical: 9, marginTop: 15 }, heroButtonText: { color: Colors.blue, fontSize: 12, fontWeight: '800' }, heroOrb: { position: 'absolute', right: -22, top: 26, width: 140, height: 140, borderRadius: 70, backgroundColor: 'rgba(255,255,255,.13)', alignItems: 'center', justifyContent: 'center' }, heroOrbText: { color: '#fff', fontSize: 38, fontWeight: '900' }, heroOrbLabel: { color: 'rgba(255,255,255,.7)', fontSize: 9, fontWeight: '800', letterSpacing: 1 }, metrics: { flexDirection: 'row', gap: 9, marginBottom: 25 }, metric: { flex: 1, backgroundColor: Colors.card, borderRadius: 14, borderWidth: 1, borderColor: Colors.border, padding: 13, overflow: 'hidden' }, metricRule: { height: 3, position: 'absolute', top: 0, left: 0, right: 0 }, metricLabel: { color: Colors.muted, fontSize: 9, fontWeight: '800', letterSpacing: .7, marginTop: 5 }, metricValue: { color: Colors.white, fontSize: 22, fontWeight: '900', marginTop: 7 }, metricDetail: { color: Colors.muted, fontSize: 10, marginTop: 3 }, sectionTitle: { color: Colors.white, fontSize: 15, fontWeight: '800', marginBottom: 11 }, actions: { gap: 9, marginBottom: 26 }, action: { backgroundColor: Colors.card, borderWidth: 1, borderColor: Colors.border, borderRadius: 13, padding: 13, flexDirection: 'row', alignItems: 'center', gap: 12 }, actionPrimary: { backgroundColor: 'rgba(37,99,235,.13)', borderColor: 'rgba(37,99,235,.45)' }, actionSymbol: { width: 35, height: 35, borderRadius: 10, backgroundColor: Colors.bgMid, alignItems: 'center', justifyContent: 'center' }, actionSymbolPrimary: { backgroundColor: '#fff' }, actionSymbolText: { color: Colors.cyan, fontSize: 21, fontWeight: '500' }, actionLabel: { color: Colors.white, fontSize: 13, fontWeight: '750' }, actionHint: { color: Colors.muted, fontSize: 11, marginTop: 2 }, chevron: { color: Colors.muted, fontSize: 24 }, sectionHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }, link: { color: Colors.cyan, fontSize: 12, fontWeight: '700' }, customer: { flexDirection: 'row', alignItems: 'center', padding: 13, gap: 11 }, customerBorder: { borderBottomWidth: 1, borderBottomColor: Colors.border }, customerInfo: { flex: 1 }, customerName: { color: Colors.white, fontSize: 14, fontWeight: '700' }, customerMeta: { color: Colors.muted, fontSize: 11, marginTop: 4 }, customerRight: { alignItems: 'flex-end', gap: 7 }, call: { color: Colors.cyan, fontSize: 11, fontWeight: '700' }, signOut: { alignItems: 'center', padding: 18 }, signOutText: { color: Colors.muted, fontSize: 12, fontWeight: '600' } });

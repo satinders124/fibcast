@@ -34,10 +34,10 @@ const screenOpts = {
   contentStyle:        { backgroundColor: Colors.bg },
 };
 
-function TabIcon({ emoji, focused }) {
+function TabIcon({ symbol, focused }) {
   return (
-    <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-      <Text style={{ fontSize: 20, opacity: focused ? 1 : 0.4 }}>{emoji}</Text>
+    <View style={{ width: 28, height: 25, alignItems: 'center', justifyContent: 'center' }}>
+      <Text style={{ fontSize: 21, fontWeight: '700', color: focused ? Colors.cyan : Colors.muted }}>{symbol}</Text>
     </View>
   );
 }
@@ -94,11 +94,11 @@ function OwnerTabs() {
         tabBarLabelStyle: { fontSize: 10, fontWeight: '600', marginTop: 2 },
       }}
     >
-      <Tab.Screen name="Dashboard" component={DashboardStack} options={{ tabBarIcon: ({ focused }) => <TabIcon emoji="📊" focused={focused} />, tabBarLabel: 'Dashboard' }} />
-      <Tab.Screen name="Customers" component={CustomersStack} options={{ tabBarIcon: ({ focused }) => <TabIcon emoji="👥" focused={focused} />, tabBarLabel: 'Customers' }} />
-      <Tab.Screen name="Bills"     component={BillScreen}     options={{ tabBarIcon: ({ focused }) => <TabIcon emoji="💰" focused={focused} />, tabBarLabel: 'Bills' }} />
-      <Tab.Screen name="Search"    component={SearchScreen}   options={{ tabBarIcon: ({ focused }) => <TabIcon emoji="🔍" focused={focused} />, tabBarLabel: 'Search' }} />
-      <Tab.Screen name="Business"  component={BusinessStack}  options={{ tabBarIcon: ({ focused }) => <TabIcon emoji="🏢" focused={focused} />, tabBarLabel: 'Business' }} />
+      <Tab.Screen name="Dashboard" component={DashboardStack} options={{ tabBarIcon: ({ focused }) => <TabIcon symbol="⌂" focused={focused} />, tabBarLabel: 'Dashboard' }} />
+      <Tab.Screen name="Customers" component={CustomersStack} options={{ tabBarIcon: ({ focused }) => <TabIcon symbol="♙" focused={focused} />, tabBarLabel: 'Customers' }} />
+      <Tab.Screen name="Bills"     component={BillScreen}     options={{ tabBarIcon: ({ focused }) => <TabIcon symbol="₹" focused={focused} />, tabBarLabel: 'Bills' }} />
+      <Tab.Screen name="Search"    component={SearchScreen}   options={{ tabBarIcon: ({ focused }) => <TabIcon symbol="⌕" focused={focused} />, tabBarLabel: 'Search' }} />
+      <Tab.Screen name="Business"  component={BusinessStack}  options={{ tabBarIcon: ({ focused }) => <TabIcon symbol="▦" focused={focused} />, tabBarLabel: 'Business' }} />
     </Tab.Navigator>
   );
 }
@@ -122,10 +122,10 @@ function StaffTabs() {
         tabBarLabelStyle: { fontSize: 10, fontWeight: '600', marginTop: 2 },
       }}
     >
-      <Tab.Screen name="Dashboard" component={DashboardStack} options={{ tabBarIcon: ({ focused }) => <TabIcon emoji="📊" focused={focused} />, tabBarLabel: 'Dashboard' }} />
-      <Tab.Screen name="Customers" component={CustomersStack} options={{ tabBarIcon: ({ focused }) => <TabIcon emoji="👥" focused={focused} />, tabBarLabel: 'Customers' }} />
-      <Tab.Screen name="Bills"     component={BillScreen}     options={{ tabBarIcon: ({ focused }) => <TabIcon emoji="💰" focused={focused} />, tabBarLabel: 'Bills' }} />
-      <Tab.Screen name="Search"    component={SearchScreen}   options={{ tabBarIcon: ({ focused }) => <TabIcon emoji="🔍" focused={focused} />, tabBarLabel: 'Search' }} />
+      <Tab.Screen name="Dashboard" component={DashboardStack} options={{ tabBarIcon: ({ focused }) => <TabIcon symbol="⌂" focused={focused} />, tabBarLabel: 'Dashboard' }} />
+      <Tab.Screen name="Customers" component={CustomersStack} options={{ tabBarIcon: ({ focused }) => <TabIcon symbol="♙" focused={focused} />, tabBarLabel: 'Customers' }} />
+      <Tab.Screen name="Bills"     component={BillScreen}     options={{ tabBarIcon: ({ focused }) => <TabIcon symbol="₹" focused={focused} />, tabBarLabel: 'Bills' }} />
+      <Tab.Screen name="Search"    component={SearchScreen}   options={{ tabBarIcon: ({ focused }) => <TabIcon symbol="⌕" focused={focused} />, tabBarLabel: 'Search' }} />
     </Tab.Navigator>
   );
 }
