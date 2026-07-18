@@ -1,10 +1,11 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { Alert } from 'react-native';
 import {
   doc, onSnapshot, setDoc, collection,
-  deleteDoc, serverTimestamp,
+  updateDoc, serverTimestamp,
 } from 'firebase/firestore';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { db, auth } from '../lib/firebase';
+import { createUserWithEmailAndPassword, signOut } from 'firebase/auth';
+import { db, auth, staffAuth } from '../lib/firebase';
 import { useAuth } from './AuthContext';
 
 const RoleContext = createContext({});
@@ -22,9 +23,23 @@ export function RoleProvider({ children }) {
     const ref  = doc(db, 'users', user.uid);
     const unsub = onSnapshot(ref, (snap) => {
       if (snap.exists()) {
-        setRole(snap.data().role || 'staff');
+        const data = snap.data();
+        if (data.disabled) {
+          // Access was revoked by the workspace owner — refuse the session.
+          setRole(null);
+          setLoading(false);
+          Alert.alert(
+            'Access removed',
+            'Your access to this workspace has been removed. Please contact the business owner.'
+          );
+          signOut(auth).catch(() => {});
+          return;
+        }
+        setRole(data.role || 'staff');
       } else {
-        // First user = owner
+        // First user on a fresh workspace = owner.
+        // Safe because staff docs are soft-revoked (never deleted): a removed
+        // staff member still has a doc — with disabled:true — and is stopped above.
         setDoc(ref, {
           email:     user.email,
           role:      'owner',
@@ -38,7 +53,7 @@ export function RoleProvider({ children }) {
     return unsub;
   }, [user]);
 
-  // Get all staff (owner only)
+  // Get all active staff (owner only)
   useEffect(() => {
     if (!user || role !== 'owner') return;
 
@@ -46,7 +61,7 @@ export function RoleProvider({ children }) {
     const unsub = onSnapshot(ref, (snap) => {
       setStaff(snap.docs
         .map(d => ({ id: d.id, ...d.data() }))
-        .filter(u => u.id !== user.uid)
+        .filter(u => !u.disabled && u.id !== user.uid)
       );
     });
 
@@ -54,21 +69,33 @@ export function RoleProvider({ children }) {
   }, [user, role]);
 
   async function addStaff(email, password, name) {
-    // Create Firebase auth user
-    const cred = await createUserWithEmailAndPassword(auth, email, password);
-    // Save to Firestore
-    await setDoc(doc(db, 'users', cred.user.uid), {
-      email,
-      name,
-      role:      'staff',
-      createdAt: serverTimestamp(),
-      createdBy: user.uid,
-    });
+    // Create the account on the secondary in-memory auth instance so the
+    // owner's session is never replaced by the new staff user.
+    const cred = await createUserWithEmailAndPassword(staffAuth, email, password);
+    try {
+      await setDoc(doc(db, 'users', cred.user.uid), {
+        email,
+        name,
+        role:      'staff',
+        createdAt: serverTimestamp(),
+        createdBy: user.uid,
+      });
+    } finally {
+      // Always drop the throwaway staff session, success or failure.
+      await signOut(staffAuth).catch(() => {});
+    }
     return cred;
   }
 
   async function removeStaff(staffId) {
-    await deleteDoc(doc(db, 'users', staffId));
+    // Soft-revoke instead of deleting the user doc. The doc stays behind as a
+    // tombstone: if the revoked account signs in again, RoleProvider detects
+    // disabled:true and refuses the session (instead of the blank-doc fallback
+    // promoting them to owner of a fresh workspace).
+    await updateDoc(doc(db, 'users', staffId), {
+      disabled:  true,
+      revokedAt: serverTimestamp(),
+    });
   }
 
   const isOwner = role === 'owner';

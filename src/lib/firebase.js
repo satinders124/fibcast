@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { initializeAuth, getReactNativePersistence } from 'firebase/auth';
+import { initializeAuth, getReactNativePersistence, inMemoryPersistence } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -19,3 +19,14 @@ export const auth = initializeAuth(app, {
 });
 
 export const db = getFirestore(app);
+
+// ── Staff provisioning ─────────────────────────────────────────
+// Secondary, in-memory-only app used EXCLUSIVELY to create staff
+// auth accounts. createUserWithEmailAndPassword signs the caller
+// into the auth instance it was called on — using a throwaway
+// instance means the signed-in owner's session is never replaced.
+const staffApp = initializeApp(firebaseConfig, 'fibcast-staff-provisioning');
+
+export const staffAuth = initializeAuth(staffApp, {
+  persistence: inMemoryPersistence,
+});
