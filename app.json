@@ -10,7 +10,7 @@
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#080F1E"
+      "backgroundColor": "#05080F"
     },
     "ios": {
       "supportsTablet": false,
@@ -20,7 +20,7 @@
       "package": "com.fibcast.app",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#080F1E"
+        "backgroundColor": "#05080F"
       }
     },
     "plugins": [],

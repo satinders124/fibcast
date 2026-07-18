@@ -5,7 +5,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Colors } from '../theme';
-import { Avatar, Badge } from '../components/UI';
+import { Avatar, Badge, EmptyState } from '../components/UI';
 import { useCustomers } from '../context/CustomerContext';
 
 export default function SearchScreen({ navigation }) {
@@ -73,19 +73,19 @@ export default function SearchScreen({ navigation }) {
       </View>
 
       {query && results.length === 0 ? (
-        <View style={s.empty}>
-          <Text style={s.emptyIcon}>😕</Text>
-          <Text style={s.emptyTitle}>No match found</Text>
-          <Text style={s.emptySub}>Try a different User ID or name</Text>
-        </View>
+        <EmptyState
+          icon="🔎"
+          title="No match found"
+          subtitle="Try a different User ID, VLAN, mobile or name."
+        />
       ) : null}
 
       {!query ? (
-        <View style={s.empty}>
-          <Text style={s.emptyIcon}>⚡</Text>
-          <Text style={s.emptyTitle}>Instant lookup</Text>
-          <Text style={s.emptySub}>Find any customer in under a second</Text>
-        </View>
+        <EmptyState
+          icon="⚡"
+          title="Instant lookup"
+          subtitle="Find any customer in under a second — search by User ID, VLAN, mobile or name."
+        />
       ) : null}
 
       <FlatList
@@ -102,22 +102,18 @@ export default function SearchScreen({ navigation }) {
 
 const s = StyleSheet.create({
   safe:        { flex: 1, backgroundColor: Colors.bg },
-  title:       { fontSize: 22, fontWeight: '900', color: Colors.white, paddingHorizontal: 18, paddingTop: 16, letterSpacing: -0.5 },
+  title:       { fontSize: 26, fontWeight: '900', color: Colors.white, paddingHorizontal: 18, paddingTop: 18, letterSpacing: -0.8 },
   sub:         { fontSize: 13, color: Colors.muted, paddingHorizontal: 18, marginTop: 4, marginBottom: 16 },
-  searchWrap:  { flexDirection: 'row', alignItems: 'center', backgroundColor: Colors.card, borderRadius: 14, borderWidth: 1, borderColor: Colors.border, marginHorizontal: 18, marginBottom: 16, paddingHorizontal: 14 },
+  searchWrap:  { flexDirection: 'row', alignItems: 'center', backgroundColor: Colors.cardAlt, borderRadius: 14, borderWidth: 1, borderColor: Colors.border, marginHorizontal: 18, marginBottom: 16, paddingHorizontal: 14 },
   searchIcon:  { fontSize: 18, marginRight: 8 },
   searchInput: { flex: 1, color: Colors.white, fontSize: 16, paddingVertical: 14 },
   list:        { paddingHorizontal: 18, gap: 10, paddingBottom: 30 },
-  resultCard:  { backgroundColor: Colors.card, borderRadius: 14, borderWidth: 1, borderColor: Colors.border, padding: 16, flexDirection: 'row', alignItems: 'center', gap: 14 },
+  resultCard:  { backgroundColor: Colors.card, borderRadius: 18, borderWidth: 1, borderColor: Colors.border, padding: 15, flexDirection: 'row', alignItems: 'center', gap: 13 },
   resultInfo:  { flex: 1, minWidth: 0 },
-  resultName:  { fontSize: 15, fontWeight: '700', color: Colors.white, marginBottom: 3 },
+  resultName:  { fontSize: 15, fontWeight: '800', color: Colors.white, marginBottom: 3 },
   resultMeta:  { fontSize: 12, color: Colors.muted, marginTop: 1 },
   resultRight: { alignItems: 'flex-end', gap: 4 },
-  resultUID:   { fontSize: 15, fontWeight: '900', color: Colors.cyan },
+  resultUID:   { fontSize: 15, fontWeight: '900', color: Colors.cyanSoft },
   resultVlan:  { fontSize: 11, color: Colors.muted },
   resultPlan:  { fontSize: 11, color: Colors.muted },
-  empty:       { alignItems: 'center', justifyContent: 'center', paddingVertical: 60 },
-  emptyIcon:   { fontSize: 52, marginBottom: 14 },
-  emptyTitle:  { fontSize: 17, fontWeight: '700', color: Colors.white, marginBottom: 6 },
-  emptySub:    { fontSize: 13, color: Colors.muted },
 });

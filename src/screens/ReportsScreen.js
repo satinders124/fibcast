@@ -3,7 +3,8 @@ import {
   View, Text, StyleSheet, ScrollView, RefreshControl,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Colors } from '../theme';
+import { LinearGradient } from 'expo-linear-gradient';
+import { Colors, Gradients } from '../theme';
 import { Card } from '../components/UI';
 import { useCustomers } from '../context/CustomerContext';
 
@@ -104,7 +105,12 @@ export default function ReportsScreen() {
               <Text style={s.rateValue}>{stats.activeRate}%</Text>
             </View>
             <View style={s.rateBarWrap}>
-              <View style={[s.rateBar, { width: `${stats.activeRate}%` }]} />
+              <LinearGradient
+                colors={Gradients.accent}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }}
+                style={[s.rateBar, { width: `${Math.max(stats.activeRate, 2)}%` }]}
+              />
             </View>
             <View style={s.rateRow}>
               <Text style={s.rateSub}>{stats.active} active of {stats.total} total</Text>
@@ -156,21 +162,21 @@ export default function ReportsScreen() {
 
 const s = StyleSheet.create({
   safe:         { flex: 1, backgroundColor: Colors.bg },
-  header:       { paddingHorizontal: 18, paddingTop: 16, marginBottom: 8 },
-  title:        { fontSize: 24, fontWeight: '900', color: Colors.white, letterSpacing: -0.5 },
+  header:       { paddingHorizontal: 18, paddingTop: 18, marginBottom: 8 },
+  title:        { fontSize: 26, fontWeight: '900', color: Colors.white, letterSpacing: -0.8 },
   sub:          { fontSize: 13, color: Colors.muted, marginTop: 4 },
-  section:      { paddingHorizontal: 18, marginTop: 20 },
-  sectionLabel: { fontSize: 10, fontWeight: '700', color: Colors.muted, textTransform: 'uppercase', letterSpacing: 0.8, marginBottom: 10 },
+  section:      { paddingHorizontal: 18, marginTop: 22 },
+  sectionLabel: { fontSize: 10.5, fontWeight: '800', color: Colors.muted, textTransform: 'uppercase', letterSpacing: 1.2, marginBottom: 10 },
   reportGrid:   { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
-  reportCard:   { width: '47%', backgroundColor: Colors.card, borderRadius: 14, borderWidth: 1, borderColor: Colors.border, borderTopWidth: 2, padding: 14, alignItems: 'center' },
+  reportCard:   { width: '47%', backgroundColor: Colors.card, borderRadius: 16, borderWidth: 1, borderColor: Colors.border, borderTopWidth: 2.5, padding: 16, alignItems: 'center' },
   reportIcon:   { fontSize: 22, marginBottom: 8 },
-  reportValue:  { fontSize: 24, fontWeight: '900', color: Colors.white, lineHeight: 26 },
-  reportLabel:  { fontSize: 10, color: Colors.muted, marginTop: 4, fontWeight: '600', textAlign: 'center' },
+  reportValue:  { fontSize: 26, fontWeight: '900', color: Colors.white, lineHeight: 30, letterSpacing: -0.6 },
+  reportLabel:  { fontSize: 10.5, color: Colors.muted, marginTop: 4, fontWeight: '700', textAlign: 'center', textTransform: 'uppercase', letterSpacing: 0.5 },
   rateRow:      { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 },
-  rateLabel:    { fontSize: 13, color: Colors.white, fontWeight: '600' },
-  rateValue:    { fontSize: 18, fontWeight: '900', color: Colors.cyan },
-  rateBarWrap:  { height: 8, backgroundColor: 'rgba(255,255,255,0.06)', borderRadius: 4, marginBottom: 10, overflow: 'hidden' },
-  rateBar:      { height: '100%', backgroundColor: Colors.cyan, borderRadius: 4 },
+  rateLabel:    { fontSize: 13, color: Colors.white, fontWeight: '700' },
+  rateValue:    { fontSize: 19, fontWeight: '900', color: Colors.cyanSoft },
+  rateBarWrap:  { height: 9, backgroundColor: 'rgba(255,255,255,0.06)', borderRadius: 5, marginBottom: 10, overflow: 'hidden' },
+  rateBar:      { height: '100%', borderRadius: 5 },
   rateSub:      { fontSize: 11, color: Colors.muted },
   planRowWrap:  { borderBottomWidth: 1, borderBottomColor: Colors.border },
   planRow:      { flexDirection: 'row', alignItems: 'center', padding: 14, gap: 10 },

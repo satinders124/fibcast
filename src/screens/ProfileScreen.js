@@ -4,7 +4,8 @@ import {
   ActivityIndicator, TouchableOpacity, RefreshControl,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Colors } from '../theme';
+import { LinearGradient } from 'expo-linear-gradient';
+import { Colors, Gradients, Shadow } from '../theme';
 import { FormInput, PrimaryButton, Toast } from '../components/UI';
 import { useBusiness } from '../context/BusinessContext';
 import { useAuth } from '../context/AuthContext';
@@ -56,11 +57,16 @@ export default function ProfileScreen() {
       >
         {/* Avatar */}
         <View style={s.avatarWrap}>
-          <View style={s.avatar}>
+          <LinearGradient
+            colors={Gradients.brand}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={[s.avatar, Shadow.glow(Colors.blue)]}
+          >
             <Text style={s.avatarText}>
               {form.ownerName ? form.ownerName[0].toUpperCase() : '👤'}
             </Text>
-          </View>
+          </LinearGradient>
           <Text style={s.avatarName}>{form.ownerName || 'Your Name'}</Text>
           <Text style={s.avatarEmail}>{user?.email}</Text>
         </View>
@@ -79,11 +85,7 @@ export default function ProfileScreen() {
         <FormInput label="Address"        value={form.address}      onChangeText={t => set('address', t)}      placeholder="Office address" multiline />
 
         {/* Save */}
-        {saving ? (
-          <ActivityIndicator color={Colors.cyan} size="large" style={{ marginTop: 20 }} />
-        ) : (
-          <PrimaryButton title="Save Profile" onPress={save} style={{ marginTop: 20 }} />
-        )}
+        <PrimaryButton title="Save Profile" onPress={save} loading={saving} style={{ marginTop: 20 }} />
 
         {/* Sign out */}
         <TouchableOpacity onPress={logout} style={s.logoutBtn}>
@@ -107,12 +109,12 @@ const s = StyleSheet.create({
   safe:        { flex: 1, backgroundColor: Colors.bg },
   scroll:      { padding: 20 },
   loader:      { flex: 1, alignItems: 'center', justifyContent: 'center' },
-  avatarWrap:  { alignItems: 'center', marginBottom: 28, paddingTop: 10 },
-  avatar:      { width: 80, height: 80, borderRadius: 40, backgroundColor: Colors.blue, alignItems: 'center', justifyContent: 'center', marginBottom: 12, shadowColor: Colors.blue, shadowOpacity: 0.4, shadowRadius: 16, elevation: 8 },
-  avatarText:  { fontSize: 32, fontWeight: '900', color: '#fff' },
-  avatarName:  { fontSize: 20, fontWeight: '900', color: Colors.white, letterSpacing: -0.5 },
+  avatarWrap:  { alignItems: 'center', marginBottom: 28, paddingTop: 12 },
+  avatar:      { width: 88, height: 88, borderRadius: 28, alignItems: 'center', justifyContent: 'center', marginBottom: 14 },
+  avatarText:  { fontSize: 34, fontWeight: '900', color: '#fff' },
+  avatarName:  { fontSize: 21, fontWeight: '900', color: Colors.white, letterSpacing: -0.6 },
   avatarEmail: { fontSize: 13, color: Colors.muted, marginTop: 4 },
-  groupLabel:  { fontSize: 10, fontWeight: '700', color: Colors.muted, textTransform: 'uppercase', letterSpacing: 0.8, marginTop: 16, marginBottom: 10 },
-  logoutBtn:   { marginTop: 20, padding: 16, borderRadius: 50, borderWidth: 1, borderColor: 'rgba(239,68,68,0.3)', alignItems: 'center', backgroundColor: 'rgba(239,68,68,0.07)' },
-  logoutText:  { color: Colors.red, fontWeight: '700', fontSize: 15 },
+  groupLabel:  { fontSize: 10.5, fontWeight: '800', color: Colors.muted, textTransform: 'uppercase', letterSpacing: 1.2, marginTop: 18, marginBottom: 10 },
+  logoutBtn:   { marginTop: 24, padding: 15, borderRadius: 14, borderWidth: 1, borderColor: 'rgba(239,68,68,0.30)', alignItems: 'center', backgroundColor: 'rgba(239,68,68,0.08)' },
+  logoutText:  { color: Colors.redSoft, fontWeight: '800', fontSize: 14 },
 });

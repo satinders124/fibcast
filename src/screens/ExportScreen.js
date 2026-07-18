@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import {
   View, Text, StyleSheet, ScrollView,
-  TouchableOpacity, RefreshControl, Share, Alert,
+  TouchableOpacity, RefreshControl, Share,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Colors } from '../theme';
-import { Card, PrimaryButton } from '../components/UI';
+import { Card } from '../components/UI';
 import { useCustomers } from '../context/CustomerContext';
 
 function ExportOption({ icon, title, subtitle, onPress, accent }) {
@@ -157,17 +157,17 @@ export default function ExportScreen() {
 
 const s = StyleSheet.create({
   safe:           { flex: 1, backgroundColor: Colors.bg },
-  header:         { paddingHorizontal: 18, paddingTop: 16, marginBottom: 8 },
-  title:          { fontSize: 24, fontWeight: '900', color: Colors.white, letterSpacing: -0.5 },
+  header:         { paddingHorizontal: 18, paddingTop: 18, marginBottom: 8 },
+  title:          { fontSize: 26, fontWeight: '900', color: Colors.white, letterSpacing: -0.8 },
   sub:            { fontSize: 13, color: Colors.muted, marginTop: 4 },
-  section:        { paddingHorizontal: 18, marginTop: 20 },
-  sectionLabel:   { fontSize: 10, fontWeight: '700', color: Colors.muted, textTransform: 'uppercase', letterSpacing: 0.8, marginBottom: 10 },
+  section:        { paddingHorizontal: 18, marginTop: 22 },
+  sectionLabel:   { fontSize: 10.5, fontWeight: '800', color: Colors.muted, textTransform: 'uppercase', letterSpacing: 1.2, marginBottom: 10 },
   summaryRow:     { flexDirection: 'row', justifyContent: 'space-around' },
   summaryItem:    { alignItems: 'center' },
-  summaryValue:   { fontSize: 24, fontWeight: '900', color: Colors.white },
-  summaryLabel:   { fontSize: 11, color: Colors.muted, marginTop: 4 },
+  summaryValue:   { fontSize: 26, fontWeight: '900', color: Colors.white, letterSpacing: -0.6 },
+  summaryLabel:   { fontSize: 10.5, color: Colors.muted, marginTop: 4, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.5 },
   optionsList:    { gap: 10 },
-  optionCard:     { backgroundColor: Colors.card, borderRadius: 14, borderWidth: 1, borderColor: Colors.border, borderLeftWidth: 3, padding: 16, flexDirection: 'row', alignItems: 'center', gap: 14 },
+  optionCard:     { backgroundColor: Colors.card, borderRadius: 16, borderWidth: 1, borderColor: Colors.border, borderLeftWidth: 3, padding: 16, flexDirection: 'row', alignItems: 'center', gap: 14 },
   optionIcon:     { fontSize: 24 },
   optionInfo:     { flex: 1 },
   optionTitle:    { fontSize: 14, fontWeight: '700', color: Colors.white, marginBottom: 3 },

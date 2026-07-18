@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import {
   View, Text, StyleSheet, ScrollView,
   TouchableOpacity, ActivityIndicator,
-  Alert, RefreshControl,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as DocumentPicker from 'expo-document-picker';
@@ -369,11 +368,11 @@ export default function ImportScreen({ navigation }) {
 
 const s = StyleSheet.create({
   safe:             { flex: 1, backgroundColor: Colors.bg },
-  header:           { paddingHorizontal: 18, paddingTop: 16, marginBottom: 8 },
-  title:            { fontSize: 24, fontWeight: '900', color: Colors.white, letterSpacing: -0.5 },
+  header:           { paddingHorizontal: 18, paddingTop: 18, marginBottom: 8 },
+  title:            { fontSize: 26, fontWeight: '900', color: Colors.white, letterSpacing: -0.8 },
   sub:              { fontSize: 13, color: Colors.muted, marginTop: 4, lineHeight: 18 },
-  section:          { paddingHorizontal: 18, marginTop: 16 },
-  sectionLabel:     { fontSize: 10, fontWeight: '700', color: Colors.muted, textTransform: 'uppercase', letterSpacing: 0.8, marginBottom: 10 },
+  section:          { paddingHorizontal: 18, marginTop: 18 },
+  sectionLabel:     { fontSize: 10.5, fontWeight: '800', color: Colors.muted, textTransform: 'uppercase', letterSpacing: 1.2, marginBottom: 10 },
   stepRow:          { flexDirection: 'row', alignItems: 'flex-start', gap: 10, marginBottom: 10 },
   stepDot:          { width: 6, height: 6, borderRadius: 3, backgroundColor: Colors.cyan, marginTop: 5, flexShrink: 0 },
   stepText:         { fontSize: 13, color: Colors.off, lineHeight: 18, flex: 1 },
@@ -381,7 +380,7 @@ const s = StyleSheet.create({
   mapFrom:          { fontSize: 12, color: Colors.muted, flex: 1 },
   mapArrow:         { fontSize: 12, color: Colors.muted },
   mapTo:            { fontSize: 12, color: Colors.cyan, flex: 1.2, textAlign: 'right' },
-  uploadBtn:        { backgroundColor: Colors.card, borderRadius: 16, borderWidth: 2, borderColor: Colors.blue, borderStyle: 'dashed', padding: 32, alignItems: 'center', gap: 8 },
+  uploadBtn:        { backgroundColor: Colors.cardAlt, borderRadius: 20, borderWidth: 1.5, borderColor: Colors.borderH, borderStyle: 'dashed', padding: 34, alignItems: 'center', gap: 8 },
   uploadIcon:       { fontSize: 40 },
   uploadTitle:      { fontSize: 16, fontWeight: '800', color: Colors.white },
   uploadSub:        { fontSize: 12, color: Colors.muted, textAlign: 'center' },
@@ -403,9 +402,9 @@ const s = StyleSheet.create({
   moreRow:          { padding: 12, alignItems: 'center' },
   moreText:         { fontSize: 12, color: Colors.muted },
   actions:          { flexDirection: 'row', gap: 12, marginBottom: 16 },
-  importingBtn:     { backgroundColor: Colors.blue, borderRadius: 50, paddingVertical: 13, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10 },
-  importingText:    { color: '#fff', fontWeight: '700', fontSize: 15 },
-  doneCard:         { backgroundColor: Colors.card, borderRadius: 16, borderWidth: 1, borderColor: Colors.border, padding: 32, alignItems: 'center' },
+  importingBtn:     { backgroundColor: Colors.blue, borderRadius: 14, paddingVertical: 14, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10 },
+  importingText:    { color: '#fff', fontWeight: '800', fontSize: 15 },
+  doneCard:         { backgroundColor: Colors.card, borderRadius: 22, borderWidth: 1, borderColor: Colors.border, padding: 34, alignItems: 'center' },
   doneIcon:         { fontSize: 52, marginBottom: 16 },
   doneTitle:        { fontSize: 22, fontWeight: '900', color: Colors.white, marginBottom: 8 },
   doneSub:          { fontSize: 14, color: Colors.muted, textAlign: 'center', lineHeight: 20 },

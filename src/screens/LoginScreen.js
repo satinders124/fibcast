@@ -2,12 +2,27 @@ import React, { useState } from 'react';
 import {
   View, Text, StyleSheet, TouchableOpacity,
   KeyboardAvoidingView, Platform, ScrollView,
-  ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Colors } from '../theme';
+import { LinearGradient } from 'expo-linear-gradient';
+import { Colors, Gradients, Shadow } from '../theme';
 import { FormInput, PrimaryButton } from '../components/UI';
 import { useAuth } from '../context/AuthContext';
+
+const HIGHLIGHTS = [
+  { symbol: '◉', label: 'Live customer sync' },
+  { symbol: '₹', label: 'Collections tracking' },
+  { symbol: '↗', label: 'Business insights' },
+];
+
+function FeatureChip({ symbol, label }) {
+  return (
+    <View style={s.chip}>
+      <Text style={s.chipSymbol}>{symbol}</Text>
+      <Text style={s.chipLabel}>{label}</Text>
+    </View>
+  );
+}
 
 export default function LoginScreen() {
   const { login } = useAuth();
@@ -25,7 +40,7 @@ export default function LoginScreen() {
     setLoading(true); setError('');
     try {
       await login(email.trim(), password);
-    } catch (e) {
+    } catch {
       setError('Invalid email or password. Please try again.');
     } finally {
       setLoading(false);
@@ -33,82 +48,130 @@ export default function LoginScreen() {
   }
 
   return (
-    <SafeAreaView style={s.safe}>
-      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
-        <ScrollView contentContainerStyle={s.scroll} keyboardShouldPersistTaps="handled">
+    <View style={s.safe}>
+      {/* Ambient fiber glow backdrop */}
+      <LinearGradient
+        colors={['rgba(37,99,235,0.22)', 'transparent']}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 0.9, y: 0.7 }}
+        style={s.glowTop}
+      />
+      <LinearGradient
+        colors={['transparent', 'rgba(6,182,212,0.12)']}
+        start={{ x: 1, y: 0.4 }}
+        end={{ x: 0.2, y: 1 }}
+        style={s.glowBottom}
+      />
 
-          <View style={s.logoWrap}>
-            <View style={s.logoIcon}>
-              <Text style={{ fontSize: 32 }}>📡</Text>
+      <SafeAreaView style={{ flex: 1 }}>
+        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
+          <ScrollView contentContainerStyle={s.scroll} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
+
+            {/* Brand mark */}
+            <View style={s.logoWrap}>
+              <LinearGradient
+                colors={Gradients.brand}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={[s.logoIcon, Shadow.glow(Colors.blue)]}
+              >
+                <Text style={s.logoEmoji}>📡</Text>
+              </LinearGradient>
+              <Text style={s.logoText}>
+                Fib<Text style={{ color: Colors.cyanSoft }}>cast</Text>
+              </Text>
+              <Text style={s.logoSub}>Your ISP business, in command</Text>
             </View>
-            <Text style={s.logoText}>
-              Fib<Text style={{ color: Colors.cyan }}>cast</Text>
-            </Text>
-            <Text style={s.logoSub}>ISP Dealer Management Platform</Text>
-          </View>
 
-          <View style={s.card}>
-            <View style={s.cardTop} />
-            <Text style={s.cardTitle}>Sign In</Text>
-            <Text style={s.cardSub}>Enter your credentials to continue</Text>
+            {/* Product highlights */}
+            <View style={s.chipRow}>
+              {HIGHLIGHTS.map(h => <FeatureChip key={h.label} {...h} />)}
+            </View>
 
-            <FormInput
-              label="Email"
-              required
-              value={email}
-              onChangeText={t => { setEmail(t); setError(''); }}
-              placeholder="admin@fibcast.in"
-              keyboardType="email-address"
-              autoCapitalize="none"
-            />
-
-            <View>
-              <FormInput
-                label="Password"
-                required
-                value={password}
-                onChangeText={t => { setPassword(t); setError(''); }}
-                placeholder="Enter password"
-                secureTextEntry={!show}
+            {/* Sign-in card */}
+            <View style={s.card}>
+              <LinearGradient
+                colors={Gradients.brand}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }}
+                style={s.cardTop}
               />
-              <TouchableOpacity onPress={() => setShow(!show)} style={s.eyeBtn}>
-                <Text style={{ fontSize: 16 }}>{show ? '🙈' : '👁️'}</Text>
-              </TouchableOpacity>
+              <Text style={s.cardTitle}>Welcome back</Text>
+              <Text style={s.cardSub}>Sign in to your dealer workspace</Text>
+
+              <FormInput
+                label="Email"
+                required
+                value={email}
+                onChangeText={t => { setEmail(t); setError(''); }}
+                placeholder="admin@fibcast.in"
+                keyboardType="email-address"
+                autoCapitalize="none"
+              />
+
+              <View>
+                <FormInput
+                  label="Password"
+                  required
+                  value={password}
+                  onChangeText={t => { setPassword(t); setError(''); }}
+                  placeholder="Enter password"
+                  secureTextEntry={!show}
+                />
+                <TouchableOpacity onPress={() => setShow(!show)} style={s.eyeBtn} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+                  <Text style={{ fontSize: 16 }}>{show ? '🙈' : '👁️'}</Text>
+                </TouchableOpacity>
+              </View>
+
+              {error ? (
+                <View style={s.errorBox}>
+                  <View style={s.errorDot} />
+                  <Text style={s.errorText}>{error}</Text>
+                </View>
+              ) : null}
+
+              <PrimaryButton
+                title="Sign In"
+                onPress={handleLogin}
+                loading={loading}
+                style={{ marginTop: 6 }}
+              />
             </View>
 
-            {error ? (
-              <View style={s.errorBox}>
-                <Text style={s.errorText}>⚠️ {error}</Text>
-              </View>
-            ) : null}
-
-            {loading ? (
-              <ActivityIndicator color={Colors.cyan} size="large" style={{ marginTop: 10 }} />
-            ) : (
-              <PrimaryButton title="Sign In →" onPress={handleLogin} style={{ marginTop: 8 }} />
-            )}
-          </View>
-
-          <Text style={s.version}>Fibcast v1.0.0</Text>
-        </ScrollView>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+            <Text style={s.version}>Fibcast v1.0.0 · ISP Dealer Management Platform</Text>
+          </ScrollView>
+        </KeyboardAvoidingView>
+      </SafeAreaView>
+    </View>
   );
 }
 
 const s = StyleSheet.create({
-  safe:      { flex: 1, backgroundColor: Colors.bg },
-  scroll:    { flexGrow: 1, justifyContent: 'center', padding: 24 },
-  logoWrap:  { alignItems: 'center', marginBottom: 36 },
-  logoIcon:  { width: 72, height: 72, borderRadius: 20, backgroundColor: Colors.blue, alignItems: 'center', justifyContent: 'center', marginBottom: 14, shadowColor: Colors.blue, shadowOpacity: 0.4, shadowRadius: 20, elevation: 8 },
-  logoText:  { fontSize: 30, fontWeight: '900', color: Colors.white, letterSpacing: -0.5 },
-  logoSub:   { fontSize: 13, color: Colors.muted, marginTop: 4 },
-  card:      { backgroundColor: Colors.card, borderRadius: 22, borderWidth: 1, borderColor: Colors.border, padding: 26, overflow: 'hidden', marginBottom: 20 },
-  cardTop:   { position: 'absolute', top: 0, left: 0, right: 0, height: 2, backgroundColor: Colors.blue },
-  cardTitle: { fontSize: 20, fontWeight: '800', color: Colors.white, marginBottom: 4 },
-  cardSub:   { fontSize: 13, color: Colors.muted, marginBottom: 24 },
-  eyeBtn:    { position: 'absolute', right: 14, top: 30 },
-  errorBox:  { backgroundColor: 'rgba(239,68,68,0.1)', borderWidth: 1, borderColor: 'rgba(239,68,68,0.25)', borderRadius: 10, padding: 12, marginBottom: 14 },
-  errorText: { color: '#FCA5A5', fontSize: 13 },
-  version:   { textAlign: 'center', color: Colors.muted, fontSize: 12 },
+  safe:        { flex: 1, backgroundColor: Colors.bg },
+  glowTop:     { position: 'absolute', top: 0, left: 0, right: 0, height: 420 },
+  glowBottom:  { position: 'absolute', bottom: 0, left: 0, right: 0, height: 380 },
+  scroll:      { flexGrow: 1, justifyContent: 'center', padding: 24 },
+
+  logoWrap:    { alignItems: 'center', marginBottom: 22 },
+  logoIcon:    { width: 76, height: 76, borderRadius: 24, alignItems: 'center', justifyContent: 'center', marginBottom: 16 },
+  logoEmoji:   { fontSize: 34 },
+  logoText:    { fontSize: 34, fontWeight: '900', color: Colors.white, letterSpacing: -1 },
+  logoSub:     { fontSize: 13, color: Colors.muted, marginTop: 6, fontWeight: '500' },
+
+  chipRow:     { flexDirection: 'row', justifyContent: 'center', gap: 8, marginBottom: 30, flexWrap: 'wrap' },
+  chip:        { flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: 'rgba(14,23,41,0.75)', borderWidth: 1, borderColor: Colors.border, borderRadius: 999, paddingHorizontal: 12, paddingVertical: 7 },
+  chipSymbol:  { color: Colors.cyanSoft, fontSize: 11, fontWeight: '800' },
+  chipLabel:   { color: Colors.off, fontSize: 11, fontWeight: '600' },
+
+  card:        { backgroundColor: 'rgba(14,23,41,0.92)', borderRadius: 24, borderWidth: 1, borderColor: Colors.border, padding: 26, overflow: 'hidden', marginBottom: 22, ...Shadow.card },
+  cardTop:     { position: 'absolute', top: 0, left: 0, right: 0, height: 2.5 },
+  cardTitle:   { fontSize: 21, fontWeight: '900', color: Colors.white, marginBottom: 4, letterSpacing: -0.4 },
+  cardSub:     { fontSize: 13, color: Colors.muted, marginBottom: 24 },
+  eyeBtn:      { position: 'absolute', right: 14, top: 32 },
+
+  errorBox:    { flexDirection: 'row', alignItems: 'center', gap: 8, backgroundColor: 'rgba(239,68,68,0.10)', borderWidth: 1, borderColor: 'rgba(239,68,68,0.28)', borderRadius: 12, paddingHorizontal: 12, paddingVertical: 11, marginBottom: 14 },
+  errorDot:    { width: 5, height: 5, borderRadius: 3, backgroundColor: Colors.redSoft, flexShrink: 0 },
+  errorText:   { color: '#FDA4AF', fontSize: 13, fontWeight: '600', flex: 1 },
+
+  version:     { textAlign: 'center', color: Colors.faint, fontSize: 11.5, fontWeight: '600' },
 });

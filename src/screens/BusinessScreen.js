@@ -5,7 +5,8 @@ import {
   ActivityIndicator, TextInput, Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Colors } from '../theme';
+import { LinearGradient } from 'expo-linear-gradient';
+import { Colors, Gradients, Shadow } from '../theme';
 import { Card } from '../components/UI';
 import { useBusiness } from '../context/BusinessContext';
 import { useCustomers } from '../context/CustomerContext';
@@ -89,9 +90,14 @@ export default function BusinessScreen({ navigation }) {
       >
         {/* Header */}
         <View style={s.header}>
-          <View style={s.businessIcon}>
+          <LinearGradient
+            colors={Gradients.brand}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={[s.businessIcon, Shadow.glow('rgba(37,99,235,0.5)')]}
+          >
             <Text style={{ fontSize: 32 }}>🏢</Text>
-          </View>
+          </LinearGradient>
           <Text style={s.businessName}>{profile.businessName || 'Your Business'}</Text>
           <Text style={s.businessArea}>{profile.area || 'Service Area'} · {profile.city || 'City'}</Text>
         </View>
@@ -256,16 +262,16 @@ export default function BusinessScreen({ navigation }) {
 
 const s = StyleSheet.create({
   safe:                  { flex: 1, backgroundColor: Colors.bg },
-  header:                { alignItems: 'center', paddingTop: 24, paddingBottom: 20, borderBottomWidth: 1, borderBottomColor: Colors.border, marginHorizontal: 18 },
-  businessIcon:          { width: 80, height: 80, borderRadius: 20, backgroundColor: Colors.card, borderWidth: 1, borderColor: Colors.border, alignItems: 'center', justifyContent: 'center', marginBottom: 14 },
-  businessName:          { fontSize: 22, fontWeight: '900', color: Colors.white, letterSpacing: -0.5, textAlign: 'center' },
-  businessArea:          { fontSize: 13, color: Colors.muted, marginTop: 4 },
-  section:               { paddingHorizontal: 18, marginTop: 20 },
-  sectionLabel:          { fontSize: 10, fontWeight: '700', color: Colors.muted, textTransform: 'uppercase', letterSpacing: 0.8, marginBottom: 10 },
+  header:                { alignItems: 'center', paddingTop: 28, paddingBottom: 22, borderBottomWidth: 1, borderBottomColor: Colors.border, marginHorizontal: 18 },
+  businessIcon:          { width: 84, height: 84, borderRadius: 26, alignItems: 'center', justifyContent: 'center', marginBottom: 14 },
+  businessName:          { fontSize: 24, fontWeight: '900', color: Colors.white, letterSpacing: -0.7, textAlign: 'center' },
+  businessArea:          { fontSize: 13, color: Colors.muted, marginTop: 4, fontWeight: '500' },
+  section:               { paddingHorizontal: 18, marginTop: 22 },
+  sectionLabel:          { fontSize: 10.5, fontWeight: '800', color: Colors.muted, textTransform: 'uppercase', letterSpacing: 1.2, marginBottom: 10 },
   statsRow:              { flexDirection: 'row', gap: 10 },
-  statCard:              { flex: 1, backgroundColor: Colors.card, borderRadius: 12, borderWidth: 1, borderColor: Colors.border, borderTopWidth: 2, borderTopColor: Colors.blue, padding: 12, alignItems: 'center' },
-  statValue:             { fontSize: 22, fontWeight: '900', color: Colors.white },
-  statLabel:             { fontSize: 10, color: Colors.muted, marginTop: 4, fontWeight: '600' },
+  statCard:              { flex: 1, backgroundColor: Colors.card, borderRadius: 16, borderWidth: 1, borderColor: Colors.border, borderTopWidth: 2.5, borderTopColor: Colors.blue, padding: 13, alignItems: 'center' },
+  statValue:             { fontSize: 23, fontWeight: '900', color: Colors.white, letterSpacing: -0.5 },
+  statLabel:             { fontSize: 10, color: Colors.muted, marginTop: 4, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.5 },
   infoRow:               { paddingVertical: 12, paddingHorizontal: 16, borderBottomWidth: 1, borderBottomColor: Colors.border, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   infoLabel:             { fontSize: 12, color: Colors.muted, fontWeight: '600' },
   infoValue:             { fontSize: 13, color: Colors.white, fontWeight: '500', flex: 1, textAlign: 'right' },

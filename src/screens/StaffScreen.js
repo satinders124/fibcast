@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import {
   View, Text, StyleSheet, ScrollView,
-  TouchableOpacity, ActivityIndicator,
+  TouchableOpacity,
   Alert, RefreshControl,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Colors } from '../theme';
+import { LinearGradient } from 'expo-linear-gradient';
+import { Colors, Gradients } from '../theme';
 import { Avatar, Card, FormInput, PrimaryButton, GhostButton, Toast, EmptyState } from '../components/UI';
 import { useRole } from '../context/RoleContext';
 
@@ -114,21 +115,15 @@ export default function StaffScreen() {
 
         {showForm && (
           <View style={s.formCard}>
-            <View style={s.formCardTop} />
+            <LinearGradient colors={Gradients.brand} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={s.formCardTop} />
             <Text style={s.formTitle}>Add New Staff Member</Text>
             <Text style={s.formSub}>They will use these credentials to log in.</Text>
             <FormInput label="Full Name" required value={name} onChangeText={setName} placeholder="Rajdeep Singh" />
             <FormInput label="Email" required value={email} onChangeText={setEmail} placeholder="staff@fibcast.in" keyboardType="email-address" autoCapitalize="none" />
             <FormInput label="Password" required value={password} onChangeText={setPassword} placeholder="Min 6 characters" secureTextEntry />
             <View style={s.formActions}>
-              {loading ? (
-                <ActivityIndicator color={Colors.cyan} size="large" />
-              ) : (
-                <>
-                  <GhostButton title="Cancel" onPress={() => setShowForm(false)} style={{ flex: 1 }} />
-                  <PrimaryButton title="Add Staff" onPress={handleAddStaff} style={{ flex: 1 }} />
-                </>
-              )}
+              <GhostButton title="Cancel" onPress={() => setShowForm(false)} style={{ flex: 1 }} />
+              <PrimaryButton title="Add Staff" onPress={handleAddStaff} loading={loading} style={{ flex: 1 }} />
             </View>
           </View>
         )}
@@ -179,17 +174,17 @@ export default function StaffScreen() {
 const s = StyleSheet.create({
   safe:          { flex: 1, backgroundColor: Colors.bg },
   header:        { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 18, paddingTop: 16, paddingBottom: 12 },
-  title:         { fontSize: 24, fontWeight: '900', color: Colors.white, letterSpacing: -0.5 },
-  sub:           { fontSize: 13, color: Colors.muted, marginTop: 2 },
-  addBtn:        { backgroundColor: Colors.blue, borderRadius: 50, paddingHorizontal: 18, paddingVertical: 9 },
-  addBtnText:    { color: '#fff', fontWeight: '700', fontSize: 14 },
-  formCard:      { marginHorizontal: 18, backgroundColor: Colors.card, borderRadius: 16, borderWidth: 1, borderColor: Colors.border, padding: 20, marginBottom: 16, overflow: 'hidden' },
-  formCardTop:   { position: 'absolute', top: 0, left: 0, right: 0, height: 2, backgroundColor: Colors.blue },
-  formTitle:     { fontSize: 16, fontWeight: '800', color: Colors.white, marginBottom: 4 },
-  formSub:       { fontSize: 12, color: Colors.muted, marginBottom: 20 },
+  title:         { fontSize: 26, fontWeight: '900', color: Colors.white, letterSpacing: -0.8 },
+  sub:           { fontSize: 13, color: Colors.muted, marginTop: 3 },
+  addBtn:        { backgroundColor: Colors.blue, borderRadius: 50, paddingHorizontal: 18, paddingVertical: 10 },
+  addBtnText:    { color: '#fff', fontWeight: '800', fontSize: 14 },
+  formCard:      { marginHorizontal: 18, backgroundColor: Colors.card, borderRadius: 20, borderWidth: 1, borderColor: Colors.border, padding: 22, marginBottom: 16, overflow: 'hidden' },
+  formCardTop:   { position: 'absolute', top: 0, left: 0, right: 0, height: 2.5 },
+  formTitle:     { fontSize: 17, fontWeight: '900', color: Colors.white, marginBottom: 4, letterSpacing: -0.3 },
+  formSub:       { fontSize: 12.5, color: Colors.muted, marginBottom: 20 },
   formActions:   { flexDirection: 'row', gap: 12, marginTop: 8 },
-  section:       { paddingHorizontal: 18, marginTop: 16 },
-  sectionLabel:  { fontSize: 10, fontWeight: '700', color: Colors.muted, textTransform: 'uppercase', letterSpacing: 0.8, marginBottom: 10 },
+  section:       { paddingHorizontal: 18, marginTop: 18 },
+  sectionLabel:  { fontSize: 10.5, fontWeight: '800', color: Colors.muted, textTransform: 'uppercase', letterSpacing: 1.2, marginBottom: 10 },
   roleRow:       { flexDirection: 'row', padding: 16, gap: 12, borderBottomWidth: 1, borderBottomColor: Colors.border },
   roleIcon:      { fontSize: 22 },
   roleInfo:      { flex: 1 },

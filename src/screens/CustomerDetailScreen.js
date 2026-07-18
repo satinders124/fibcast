@@ -4,7 +4,8 @@ import {
   TouchableOpacity, Alert, Clipboard,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Colors } from '../theme';
+import { LinearGradient } from 'expo-linear-gradient';
+import { Colors, Gradients, Shadow } from '../theme';
 import { Avatar, Badge, Card, PrimaryButton, GhostButton, Toast } from '../components/UI';
 import { useCustomers } from '../context/CustomerContext';
 
@@ -76,7 +77,14 @@ export default function CustomerDetailScreen({ route, navigation }) {
       <ScrollView showsVerticalScrollIndicator={false}>
 
         <View style={s.hero}>
-          <Avatar name={fresh.fullName} size={64} />
+          <LinearGradient
+            colors={Gradients.brand}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={[s.heroRing, Shadow.glow('rgba(37,99,235,0.55)')]}
+          >
+            <Avatar name={fresh.fullName} size={68} />
+          </LinearGradient>
           <Text style={s.heroName}>{fresh.fullName}</Text>
           <Badge status={fresh.status} />
           <Text style={s.heroPlan}>{fresh.planSpeed} · Joined {fresh.joinDate || '—'}</Text>
@@ -142,13 +150,14 @@ export default function CustomerDetailScreen({ route, navigation }) {
 
 const s = StyleSheet.create({
   safe:           { flex: 1, backgroundColor: Colors.bg },
-  hero:           { alignItems: 'center', paddingVertical: 28, paddingHorizontal: 20, gap: 10 },
-  heroName:       { fontSize: 22, fontWeight: '900', color: Colors.white, letterSpacing: -0.5, textAlign: 'center' },
-  heroPlan:       { fontSize: 12, color: Colors.muted, marginTop: 2 },
+  hero:           { alignItems: 'center', paddingVertical: 30, paddingHorizontal: 20, gap: 10 },
+  heroRing:       { borderRadius: 28, padding: 3, marginBottom: 4 },
+  heroName:       { fontSize: 23, fontWeight: '900', color: Colors.white, letterSpacing: -0.6, textAlign: 'center' },
+  heroPlan:       { fontSize: 12.5, color: Colors.muted, marginTop: 2, fontWeight: '600' },
   idRow:          { flexDirection: 'row', gap: 12, paddingHorizontal: 18, marginBottom: 6 },
-  idCard:         { flex: 1, backgroundColor: 'rgba(37,99,235,0.1)', borderWidth: 1, borderColor: 'rgba(37,99,235,0.25)', borderRadius: 14, padding: 16, alignItems: 'center' },
-  idCardLabel:    { fontSize: 10, color: Colors.cyan, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.8, marginBottom: 4 },
-  idCardValue:    { fontSize: 22, fontWeight: '900', color: Colors.white, marginBottom: 10 },
+  idCard:         { flex: 1, backgroundColor: 'rgba(37,99,235,0.12)', borderWidth: 1, borderColor: 'rgba(37,99,235,0.28)', borderRadius: 18, padding: 16, alignItems: 'center' },
+  idCardLabel:    { fontSize: 10, color: Colors.cyanSoft, fontWeight: '800', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 4 },
+  idCardValue:    { fontSize: 22, fontWeight: '900', color: Colors.white, marginBottom: 10, letterSpacing: -0.4 },
   idCopy:         { backgroundColor: 'rgba(6,182,212,0.1)', borderWidth: 1, borderColor: 'rgba(6,182,212,0.2)', borderRadius: 8, paddingHorizontal: 12, paddingVertical: 5 },
   idCopyText:     { color: Colors.cyan, fontSize: 11, fontWeight: '700' },
   section:        { paddingHorizontal: 18, marginTop: 16 },

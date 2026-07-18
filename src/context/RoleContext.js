@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import {
   doc, onSnapshot, setDoc, collection,
-  getDocs, deleteDoc, serverTimestamp,
+  deleteDoc, serverTimestamp,
 } from 'firebase/firestore';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { db, auth } from '../lib/firebase';

@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
 import {
   View, Text, StyleSheet, ScrollView,
-  KeyboardAvoidingView, Platform, ActivityIndicator,
+  KeyboardAvoidingView, Platform,
   TouchableOpacity,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Colors } from '../theme';
+import { LinearGradient } from 'expo-linear-gradient';
+import { Colors, Gradients } from '../theme';
 import { FormInput, PrimaryButton, GhostButton, Toast } from '../components/UI';
 import { useCustomers } from '../context/CustomerContext';
 
 const PLANS = ['₹299','₹399','₹449','₹495','₹499','₹549','₹595','₹599','₹699','₹777','₹799','₹999','₹1099','Govt Plan'];
-const STATUSES = ['Active','Inactive','Pending'];
 const BILL_STATUS = ['Paid', 'Unpaid'];
 
 function SelectPill({ label, options, value, onChange }) {
@@ -19,13 +19,21 @@ function SelectPill({ label, options, value, onChange }) {
       <Text style={s.fieldLabel}>{label}</Text>
       <View style={s.pillRow}>
         {options.map(o => (
-          <TouchableOpacity
-            key={o}
-            onPress={() => onChange(o)}
-            style={[s.pill, value === o && s.pillActive]}
-            activeOpacity={0.7}
-          >
-            <Text style={[s.pillText, value === o && s.pillTextActive]}>{o}</Text>
+          <TouchableOpacity key={o} onPress={() => onChange(o)} activeOpacity={0.7}>
+            {value === o ? (
+              <LinearGradient
+                colors={Gradients.brand}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={[s.pill, s.pillActive]}
+              >
+                <Text style={[s.pillText, s.pillTextActive]}>{o}</Text>
+              </LinearGradient>
+            ) : (
+              <View style={s.pill}>
+                <Text style={s.pillText}>{o}</Text>
+              </View>
+            )}
           </TouchableOpacity>
         ))}
       </View>
@@ -118,14 +126,13 @@ export default function AddCustomerScreen({ route, navigation }) {
           <FormInput label="" value={form.notes} onChangeText={t => set('notes', t)} placeholder="Any important notes about this customer…" multiline />
 
           <View style={s.actions}>
-            {loading ? (
-              <ActivityIndicator color={Colors.cyan} size="large" />
-            ) : (
-              <>
-                <GhostButton title="Cancel" onPress={() => navigation.goBack()} style={{ flex: 1 }} />
-                <PrimaryButton title={existing ? 'Save Changes' : 'Add Customer'} onPress={submit} style={{ flex: 1 }} />
-              </>
-            )}
+            <GhostButton title="Cancel" onPress={() => navigation.goBack()} style={{ flex: 1 }} />
+            <PrimaryButton
+              title={existing ? 'Save Changes' : 'Add Customer'}
+              onPress={submit}
+              loading={loading}
+              style={{ flex: 1 }}
+            />
           </View>
 
           <View style={{ height: 40 }} />
@@ -145,15 +152,15 @@ export default function AddCustomerScreen({ route, navigation }) {
 const s = StyleSheet.create({
   safe:           { flex: 1, backgroundColor: Colors.bg },
   scroll:         { padding: 20 },
-  heading:        { fontSize: 22, fontWeight: '900', color: Colors.white, letterSpacing: -0.5, marginBottom: 4 },
+  heading:        { fontSize: 26, fontWeight: '900', color: Colors.white, letterSpacing: -0.8, marginBottom: 4 },
   subheading:     { fontSize: 13, color: Colors.muted, marginBottom: 24 },
-  groupLabel:     { fontSize: 10, fontWeight: '700', color: Colors.muted, textTransform: 'uppercase', letterSpacing: 0.8, marginTop: 16, marginBottom: 10 },
+  groupLabel:     { fontSize: 10.5, fontWeight: '800', color: Colors.muted, textTransform: 'uppercase', letterSpacing: 1.2, marginTop: 18, marginBottom: 10 },
   fieldWrap:      { marginBottom: 14 },
-  fieldLabel:     { fontSize: 11, fontWeight: '700', color: Colors.muted, marginBottom: 8, textTransform: 'uppercase', letterSpacing: 0.7 },
+  fieldLabel:     { fontSize: 10.5, fontWeight: '800', color: Colors.muted, marginBottom: 8, textTransform: 'uppercase', letterSpacing: 1 },
   pillRow:        { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-  pill:           { paddingHorizontal: 14, paddingVertical: 8, borderRadius: 50, borderWidth: 1, borderColor: Colors.border },
-  pillActive:     { backgroundColor: Colors.blue, borderColor: Colors.blue },
-  pillText:       { fontSize: 12, fontWeight: '600', color: Colors.muted },
+  pill:           { paddingHorizontal: 15, paddingVertical: 8, borderRadius: 50, borderWidth: 1, borderColor: Colors.border, backgroundColor: Colors.cardAlt },
+  pillActive:     { borderColor: 'transparent' },
+  pillText:       { fontSize: 12, fontWeight: '700', color: Colors.muted },
   pillTextActive: { color: '#fff' },
   actions:        { flexDirection: 'row', gap: 12, marginTop: 28 },
 });

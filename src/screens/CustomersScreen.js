@@ -102,13 +102,14 @@ export default function CustomersScreen({ navigation }) {
         ))}
       </View>
 
-      <FlatList
-        data={filtered}
-        keyExtractor={c => c.id}
-        renderItem={renderItem}
-        contentContainerStyle={s.list}
-        showsVerticalScrollIndicator={false}
-        ListEmptyComponent={
+      <Card style={s.listCard}>
+        <FlatList
+          data={filtered}
+          keyExtractor={c => c.id}
+          renderItem={renderItem}
+          contentContainerStyle={s.list}
+          showsVerticalScrollIndicator={false}
+          ListEmptyComponent={
           <EmptyState
             icon={search ? '🔍' : '📡'}
             title={search ? 'No results found' : 'No customers yet'}
@@ -116,8 +117,9 @@ export default function CustomersScreen({ navigation }) {
             onAction={!search ? () => navigation.navigate('AddCustomer') : undefined}
             actionLabel="+ Add Customer"
           />
-        }
-      />
+          }
+        />
+      </Card>
     </SafeAreaView>
   );
 }
@@ -125,24 +127,25 @@ export default function CustomersScreen({ navigation }) {
 const s = StyleSheet.create({
   safe:           { flex: 1, backgroundColor: Colors.bg },
   loader:         { flex: 1, alignItems: 'center', justifyContent: 'center' },
-  header:         { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 18, paddingTop: 16, paddingBottom: 12 },
-  title:          { fontSize: 22, fontWeight: '900', color: Colors.white, letterSpacing: -0.5 },
-  count:          { fontSize: 12, color: Colors.muted, marginTop: 2 },
-  addBtn:         { backgroundColor: Colors.blue, borderRadius: 50, paddingHorizontal: 18, paddingVertical: 9 },
-  addBtnText:     { color: '#fff', fontWeight: '700', fontSize: 14 },
-  searchWrap:     { flexDirection: 'row', alignItems: 'center', backgroundColor: Colors.card, borderRadius: 12, borderWidth: 1, borderColor: Colors.border, marginHorizontal: 18, marginBottom: 12, paddingHorizontal: 12 },
+  header:         { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 18, paddingTop: 18, paddingBottom: 14 },
+  title:          { fontSize: 26, fontWeight: '900', color: Colors.white, letterSpacing: -0.8 },
+  count:          { fontSize: 12, color: Colors.muted, marginTop: 3, fontWeight: '600' },
+  addBtn:         { backgroundColor: Colors.blue, borderRadius: 50, paddingHorizontal: 18, paddingVertical: 10 },
+  addBtnText:     { color: '#fff', fontWeight: '800', fontSize: 14 },
+  searchWrap:     { flexDirection: 'row', alignItems: 'center', backgroundColor: Colors.cardAlt, borderRadius: 14, borderWidth: 1, borderColor: Colors.border, marginHorizontal: 18, marginBottom: 12, paddingHorizontal: 12 },
   searchIcon:     { fontSize: 15, marginRight: 6 },
-  searchInput:    { flex: 1, color: Colors.white, fontSize: 14, paddingVertical: 11 },
+  searchInput:    { flex: 1, color: Colors.white, fontSize: 14, paddingVertical: 12 },
   pillRow:        { flexDirection: 'row', paddingHorizontal: 18, gap: 8, marginBottom: 14 },
-  pill:           { paddingHorizontal: 14, paddingVertical: 7, borderRadius: 50, borderWidth: 1, borderColor: Colors.border },
+  pill:           { paddingHorizontal: 14, paddingVertical: 7, borderRadius: 50, borderWidth: 1, borderColor: Colors.border, backgroundColor: Colors.cardAlt },
   pillActive:     { backgroundColor: Colors.blue, borderColor: Colors.blue },
-  pillText:       { fontSize: 12, fontWeight: '600', color: Colors.muted },
+  pillText:       { fontSize: 12, fontWeight: '700', color: Colors.muted },
   pillTextActive: { color: '#fff' },
-  list:           { paddingHorizontal: 18, paddingBottom: 30 },
-  row:            { flexDirection: 'row', alignItems: 'center', paddingVertical: 14, gap: 12, backgroundColor: Colors.card },
+  listCard:       { flex: 1, marginHorizontal: 18, marginBottom: 14 },
+  list:           { paddingBottom: 30 },
+  row:            { flexDirection: 'row', alignItems: 'center', paddingVertical: 14, paddingHorizontal: 16, gap: 12 },
   rowBorder:      { borderBottomWidth: 1, borderBottomColor: Colors.border },
   rowInfo:        { flex: 1, minWidth: 0 },
-  rowName:        { fontSize: 14, fontWeight: '600', color: Colors.white },
+  rowName:        { fontSize: 14, fontWeight: '700', color: Colors.white },
   rowMeta:        { fontSize: 11, color: Colors.muted, marginTop: 2 },
   rowRight:       { alignItems: 'flex-end', gap: 4 },
   rowPlan:        { fontSize: 11, color: Colors.muted },

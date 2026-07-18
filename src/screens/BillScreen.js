@@ -5,7 +5,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Colors } from '../theme';
-import { Avatar, EmptyState } from '../components/UI';
+import { EmptyState } from '../components/UI';
 import { useCustomers } from '../context/CustomerContext';
 
 export default function BillScreen() {
@@ -162,14 +162,14 @@ export default function BillScreen() {
 
 const s = StyleSheet.create({
   safe:             { flex: 1, backgroundColor: Colors.bg },
-  header:           { paddingHorizontal: 18, paddingTop: 16, marginBottom: 12 },
-  title:            { fontSize: 24, fontWeight: '900', color: Colors.white, letterSpacing: -0.5 },
+  header:           { paddingHorizontal: 18, paddingTop: 18, marginBottom: 14 },
+  title:            { fontSize: 26, fontWeight: '900', color: Colors.white, letterSpacing: -0.8 },
   sub:              { fontSize: 13, color: Colors.muted, marginTop: 4 },
   summaryRow:       { flexDirection: 'row', gap: 10, paddingHorizontal: 18, marginBottom: 14 },
-  summaryCard:      { flex: 1, backgroundColor: Colors.card, borderRadius: 12, borderWidth: 1, borderColor: Colors.border, borderTopWidth: 2, padding: 12, alignItems: 'center' },
-  summaryValue:     { fontSize: 22, fontWeight: '900', color: Colors.white },
-  summaryLabel:     { fontSize: 10, color: Colors.muted, marginTop: 4, fontWeight: '600' },
-  banner:           { marginHorizontal: 18, backgroundColor: Colors.card, borderRadius: 14, borderWidth: 1, borderColor: 'rgba(6,182,212,0.2)', marginBottom: 14, overflow: 'hidden', padding: 16 },
+  summaryCard:      { flex: 1, backgroundColor: Colors.card, borderRadius: 16, borderWidth: 1, borderColor: Colors.border, borderTopWidth: 2.5, padding: 14, alignItems: 'center' },
+  summaryValue:     { fontSize: 24, fontWeight: '900', color: Colors.white, letterSpacing: -0.5 },
+  summaryLabel:     { fontSize: 10.5, color: Colors.muted, marginTop: 4, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.6 },
+  banner:           { marginHorizontal: 18, backgroundColor: Colors.card, borderRadius: 16, borderWidth: 1, borderColor: 'rgba(6,182,212,0.24)', marginBottom: 14, overflow: 'hidden', padding: 16 },
   bannerTop:        { position: 'absolute', top: 0, left: 0, right: 0, height: 2, backgroundColor: Colors.cyan },
   bannerTitle:      { fontSize: 14, fontWeight: '700', color: Colors.white, marginBottom: 4 },
   bannerSub:        { fontSize: 12, color: Colors.muted, lineHeight: 18 },
