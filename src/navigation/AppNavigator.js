@@ -36,8 +36,8 @@ const screenOpts = {
 
 function TabIcon({ symbol, focused }) {
   return (
-    <View style={{ width: 28, height: 25, alignItems: 'center', justifyContent: 'center' }}>
-      <Text style={{ fontSize: 21, fontWeight: '700', color: focused ? Colors.cyan : Colors.muted }}>{symbol}</Text>
+    <View style={{ width: 38, height: 31, borderRadius: 12, alignItems: 'center', justifyContent: 'center', backgroundColor: focused ? 'rgba(6,182,212,0.14)' : 'transparent' }}>
+      <Text style={{ fontSize: 27, lineHeight: 29, fontWeight: '700', color: focused ? Colors.cyan : Colors.muted }}>{symbol}</Text>
     </View>
   );
 }
@@ -85,9 +85,9 @@ function OwnerTabs() {
           backgroundColor: Colors.tabBar,
           borderTopColor:  Colors.border,
           borderTopWidth:  1,
-          height:          54 + insets.bottom,
-          paddingBottom:   insets.bottom || 8,
-          paddingTop:      8,
+          height:          72 + insets.bottom,
+          paddingBottom:   insets.bottom || 10,
+          paddingTop:      10,
         },
         tabBarActiveTintColor:   Colors.cyan,
         tabBarInactiveTintColor: Colors.muted,
@@ -113,9 +113,9 @@ function StaffTabs() {
           backgroundColor: Colors.tabBar,
           borderTopColor:  Colors.border,
           borderTopWidth:  1,
-          height:          54 + insets.bottom,
-          paddingBottom:   insets.bottom || 8,
-          paddingTop:      8,
+          height:          72 + insets.bottom,
+          paddingBottom:   insets.bottom || 10,
+          paddingTop:      10,
         },
         tabBarActiveTintColor:   Colors.cyan,
         tabBarInactiveTintColor: Colors.muted,
