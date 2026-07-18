@@ -10,6 +10,7 @@ import { Avatar, Badge, Card, EmptyState } from '../components/UI';
 import { useCustomers } from '../context/CustomerContext';
 import { useAuth } from '../context/AuthContext';
 import { useBusiness } from '../context/BusinessContext';
+import { useSettings, ordinal } from '../lib/settings';
 
 function Metric({ label, value, detail, tone }) {
   return (
@@ -52,6 +53,7 @@ export default function DashboardScreen({ navigation }) {
   const { customers, loading } = useCustomers();
   const { logout } = useAuth();
   const { profile } = useBusiness();
+  const { settings } = useSettings();
   const [refreshing, setRefreshing] = useState(false);
 
   const total      = customers.length;
@@ -93,7 +95,7 @@ export default function DashboardScreen({ navigation }) {
             <Text style={styles.title} numberOfLines={1}>Good morning, {firstName}</Text>
             <Text style={styles.subtitle}>{month} · Here’s your business pulse</Text>
           </View>
-          <TouchableOpacity onPress={() => navigation.navigate('Business')} activeOpacity={0.8}>
+          <TouchableOpacity onPress={() => navigation.navigate('Profile')} activeOpacity={0.8}>
             <LinearGradient
               colors={Gradients.brand}
               start={{ x: 0, y: 0 }}
@@ -120,7 +122,7 @@ export default function DashboardScreen({ navigation }) {
             </Text>
             <Text style={styles.heroText}>
               {unpaid
-                ? 'Follow up with customers before your next billing cycle.'
+                ? `Follow up with customers before the ${ordinal(settings.billingDay)} billing date.`
                 : 'Keep the momentum going. Your customer base is in good shape.'}
             </Text>
             <TouchableOpacity

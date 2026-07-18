@@ -7,9 +7,11 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Colors } from '../theme';
 import { EmptyState } from '../components/UI';
 import { useCustomers } from '../context/CustomerContext';
+import { useSettings, renderTemplate, ordinal } from '../lib/settings';
 
 export default function BillScreen() {
   const { customers, updateCustomer } = useCustomers();
+  const { settings } = useSettings();
   const [refreshing, setRefreshing] = useState(false);
   const [filter, setFilter] = useState('All');
 
@@ -23,7 +25,7 @@ export default function BillScreen() {
   }
 
   function openWhatsApp(mobile, name) {
-    const msg = encodeURIComponent(`Hello ${name}, your BSNL broadband bill is due this month. Please pay at the earliest to avoid disconnection. Thank you.`);
+    const msg = encodeURIComponent(renderTemplate(settings.reminderTemplate, { name }));
     Linking.openURL(`whatsapp://send?phone=91${mobile}&text=${msg}`);
   }
 
@@ -94,7 +96,7 @@ export default function BillScreen() {
     <SafeAreaView style={s.safe} edges={['top']}>
       <View style={s.header}>
         <Text style={s.title}>Bill Status</Text>
-        <Text style={s.sub}>Track and manage BSNL bill payments.</Text>
+        <Text style={s.sub}>Payments due by the {ordinal(settings.billingDay)} each month.</Text>
       </View>
 
       {/* Summary */}

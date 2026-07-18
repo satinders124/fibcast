@@ -139,7 +139,7 @@ export default function BusinessScreen({ navigation }) {
           </Card>
           <TouchableOpacity
             style={s.editBtn}
-            onPress={() => navigation.navigate('Profile')}
+            onPress={() => navigation.navigate('EditProfile')}
             activeOpacity={0.7}
           >
             <Text style={s.editBtnText}>✏️  Edit Business Profile</Text>

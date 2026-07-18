@@ -20,6 +20,8 @@ import BillScreen           from '../screens/BillScreen';
 import ExportScreen         from '../screens/ExportScreen';
 import BusinessScreen       from '../screens/BusinessScreen';
 import ProfileScreen        from '../screens/ProfileScreen';
+import EditProfileScreen    from '../screens/EditProfileScreen';
+import SettingsScreen       from '../screens/SettingsScreen';
 import StaffScreen          from '../screens/StaffScreen';
 import ImportScreen         from '../screens/ImportScreen';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -61,6 +63,8 @@ function DashboardStack() {
       <Stack.Screen name="DashboardHome"  component={DashboardScreen}      options={{ headerShown: false }} />
       <Stack.Screen name="AddCustomer"    component={AddCustomerScreen}    options={({ route }) => ({ title: route.params?.customer ? 'Edit Customer' : 'Add Customer', headerBackTitle: 'Back' })} />
       <Stack.Screen name="CustomerDetail" component={CustomerDetailScreen} options={{ title: 'Customer Detail', headerBackTitle: 'Back' }} />
+      <Stack.Screen name="Profile"        component={ProfileScreen}        options={{ title: 'Profile',  headerBackTitle: 'Back' }} />
+      <Stack.Screen name="Settings"       component={SettingsScreen}       options={{ title: 'Settings', headerBackTitle: 'Back' }} />
     </Stack.Navigator>
   );
 }
@@ -78,12 +82,12 @@ function CustomersStack() {
 function BusinessStack() {
   return (
     <Stack.Navigator screenOptions={screenOpts}>
-      <Stack.Screen name="BusinessHome" component={BusinessScreen} options={{ headerShown: false }} />
-      <Stack.Screen name="Profile"      component={ProfileScreen}  options={{ title: 'Edit Profile',     headerBackTitle: 'Back' }} />
-      <Stack.Screen name="Reports"      component={ReportsScreen}  options={{ title: 'Reports',          headerBackTitle: 'Back' }} />
-      <Stack.Screen name="Export"       component={ExportScreen}   options={{ title: 'Export Data',      headerBackTitle: 'Back' }} />
-      <Stack.Screen name="Staff"        component={StaffScreen}    options={{ title: 'Manage Staff',     headerBackTitle: 'Back' }} />
-      <Stack.Screen name="Import"       component={ImportScreen}   options={{ title: 'Import from BSNL', headerBackTitle: 'Back' }} />
+      <Stack.Screen name="BusinessHome" component={BusinessScreen}    options={{ headerShown: false }} />
+      <Stack.Screen name="EditProfile"  component={EditProfileScreen} options={{ title: 'Edit Profile',     headerBackTitle: 'Back' }} />
+      <Stack.Screen name="Reports"      component={ReportsScreen}     options={{ title: 'Reports',          headerBackTitle: 'Back' }} />
+      <Stack.Screen name="Export"       component={ExportScreen}      options={{ title: 'Export Data',      headerBackTitle: 'Back' }} />
+      <Stack.Screen name="Staff"        component={StaffScreen}       options={{ title: 'Manage Staff',     headerBackTitle: 'Back' }} />
+      <Stack.Screen name="Import"       component={ImportScreen}      options={{ title: 'Import from BSNL', headerBackTitle: 'Back' }} />
     </Stack.Navigator>
   );
 }
