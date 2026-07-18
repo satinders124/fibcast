@@ -1,0 +1,33 @@
+{
+  "expo": {
+    "name": "Fibcast",
+    "slug": "fibcast",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "sdkVersion": "54.0.0",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#080F1E"
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.fibcast.app"
+    },
+    "android": {
+      "package": "com.fibcast.app",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#080F1E"
+      }
+    },
+    "plugins": [],
+    "extra": {
+      "eas": {
+        "projectId": "7104d7bd-f4b8-40f3-a26f-05b6d08138c8"
+      }
+    }
+  }
+}
